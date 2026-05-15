@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FRUTO PROIBIDO</title>    
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">    
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">    
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* Seus ajustes de emergência do calendário */
+        #calendario-view {
+            min-height: 400px !important;
+            background: white;
+            border-radius: 8px;
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+<header class="main-header">
+    <div class="logo-container"> 
+        <img src="imagens/logo.png" alt="Logo" class="header-logo">        
+
+    </div>
+</header>
+
+<section class="marketing-gallery">
+    <div class="gallery-track">
+        <div class="gallery-item"><img src="https://cdn.sistemawbuy.com.br/arquivos/5e12cb7612d84173cb5477acacbf9605/produtos/697e082cb22fe/img_0391-69e175f1be912_mini.jpeg" alt="Festa"></div>
+
+        <div class="gallery-item"><img src="https://cdn.sistemawbuy.com.br/arquivos/5e12cb7612d84173cb5477acacbf9605/produtos/6908e73997322/whatsapp-image-2025-10-31-at-17-58-05-6908f9a7a6f87_mini.jpeg" alt="Festa"></div>
+
+        <div class="gallery-item"><img src="https://cdn.sistemawbuy.com.br/arquivos/5e12cb7612d84173cb5477acacbf9605/produtos/67ab4a64adbc9/119153-698b4f0a86000_mini.jpg" alt="Festa"></div>
+
+        <div class="gallery-item"><img src="https://cdn.sistemawbuy.com.br/arquivos/5e12cb7612d84173cb5477acacbf9605/produtos/6914e39ba7108/img-20251121-wa0026-692072ea94e0c_mini.jpg" alt="Festa"></div>
+
+        <div class="gallery-item"><img src="https://cdn.sistemawbuy.com.br/arquivos/5e12cb7612d84173cb5477acacbf9605/produtos/697e082cb22fe/img_0391-69e175f1be912_mini.jpeg" alt="Festa"></div>
+
+        <div class="gallery-item"><img src="https://cdn.sistemawbuy.com.br/arquivos/5e12cb7612d84173cb5477acacbf9605/produtos/6908e73997322/whatsapp-image-2025-10-31-at-17-58-05-6908f9a7a6f87_mini.jpeg" alt="Festa"></div>
+
+        <div class="gallery-item"><img src="https://cdn.sistemawbuy.com.br/arquivos/5e12cb7612d84173cb5477acacbf9605/produtos/67ab4a64adbc9/119153-698b4f0a86000_mini.jpg" alt="Festa"></div>   
+
+        <div class="gallery-item"><img src="https://cdn.sistemawbuy.com.br/arquivos/5e12cb7612d84173cb5477acacbf9605/produtos/69b4375a2dde7/221447-69b4376373a9d_mini.jpg" alt="Festa"></div>
+        
+    </div>
+</section>
+
+<nav class="portal-menu">
+    <button onclick="alternarSecao('catalogo')" id="btn-catalogo" class="nav-btn active">
+        <i class="fas fa-trampoline"></i> Catálogo
+    </button>
+    <button onclick="alternarSecao('solicitacoes')" id="btn-solicitacoes" class="nav-btn">
+        <i class="fas fa-clipboard-list"></i> Minhas Solicitações
+    </button>
+</nav>
+
+<main class="container">
+
+    <div class="filtro-container">
+        <label for="filtro-categoria"><i class="fas fa-filter"></i> Filtrar por:</label>
+        <select id="filtro-categoria" onchange="carregarCardapio()">
+            <option value="todos">Todos</option>
+            <option value="Brinquedos">Brinquedos</option>
+            <option value="Itens de Decoração">Itens de Decoração</option>
+            <option value="Infláveis">Infláveis</option>
+            <option value="Jogos">Jogos</option>
+            <option value="Mesas e Cadeiras">Mesas e Cadeiras</option>
+            
+        </select>
+    </div>
+    
+    <section id="secao-catalogo" class="content-section">
+        <div id="lista-brinquedos" class="grid-layout">
+            </div>
+    </section>
+
+    <section id="secao-solicitacoes" class="content-section" style="display: none;">
+        <div class="search-box">
+            <h3>Acompanhe seus pedidos</h3>
+            <p>Digite seu WhatsApp para verificar o status.</p>
+            <div class="input-group">
+                <input type="tel" id="cliente-whatsapp-consulta" placeholder="(00) 00000-0000">
+                <button onclick="consultarPedidosCliente()" class="btn-buscar">
+                    <i class="fas fa-search"></i> Consultar
+                </button>
+            </div>
+        </div>
+        <div id="historico-pedidos" class="pedidos-lista"></div>
+    </section>
+
+</main>
+
+<div id="modal-calendario" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="fecharModalCalendario()">&times;</span>
+        <h2 id="nome-produto-modal">Nome do Brinquedo</h2>
+        
+        <div id='calendario-view'></div>
+
+        <div class="form-reserva-cliente" style="margin-top: 20px;">
+            <div class="inputs-reserva">
+                <input type="date" id="reserva-ini" readonly>
+                <span>até</span>
+                <input type="date" id="reserva-fim" readonly>
+            </div>
+
+            <div id="container-estoque-periodo" style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 8px; display: none;">
+                <p style="font-size: 0.9em; color: #555; margin-bottom: 5px;">
+                    <i class="fas fa-boxes"></i> Disponibilidade para este período: 
+                    <span id="qtd-disponivel-periodo" style="font-weight: bold; color: #2ecc71;">0</span>
+                </p>
+                
+                <label style="font-size: 0.85em; font-weight: bold;">Quantidade desejada:</label>
+                <select id="select-quantidade-reserva" class="input-padrao" style="width: 100%; margin-top: 5px;">
+                    </select>
+            </div>
+
+            <div class="dados-cliente-form" style="margin-top: 15px; display: flex; flex-direction: column; gap: 10px;">
+                <input type="text" id="cliente-nome" placeholder="Seu Nome Completo" required>
+                <input type="tel" id="cliente-fone" placeholder="Seu WhatsApp (apenas números)" required>
+                <input type="text" id="cliente-endereco" placeholder="Endereço da Festa (Rua, Número, Bairro, Cidade)" required>
+            </div>
+
+            <button onclick="solicitarReserva()" class="btn-solicitar" style="margin-top: 15px;">
+                <i class="fas fa-paper-plane"></i> Enviar Solicitação de Reserva
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/pt-br.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<script src="firebase-config.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>

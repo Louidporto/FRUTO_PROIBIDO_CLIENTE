@@ -1,0 +1,489 @@
+/* --- CONFIGURAÇÕES GERAIS --- */
+:root {
+    --primary-blue: #7b001c;
+    --success-green: #2ecc71;
+    --danger-red: #e74c3c;
+    --gray-neutral: #7f8c8d;
+    --bg-light: #f4f7f6;
+    --white: #ffffff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background-color: var(--bg-light);
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* --- HEADER DE MARKETING --- */
+.main-header {
+    /* 1. Fundo levemente off-white para destacar a imagem branca 
+    background: linear-gradient(to bottom, #ffffff, #f9f9f9);*/
+
+    background: linear-gradient(to bottom, #f5e9e1, #f9f9f9);
+    
+    text-align: center;
+    padding: 20px 15px;
+    border-radius: 0 0 50px 50px;
+    
+    /* 2. Sombra projetada (Dá a sensação de que o header está flutuando) */
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    
+    /* 3. Borda fina para definir o limite entre branco e branco */
+    border-bottom: 1px solid #eee;
+
+    /*
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    
+     1. MUDANÇA: Sombra mais forte e espalhada para dar profundidade 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
+    
+     2. MUDANÇA: Cor do texto (Se a imagem é branca, o texto precisa de cor!) 
+    color: #333; /* Use um cinza escuro ou a cor primária do seu sistema */
+    
+    /* Mantenha o restante 
+    padding: 10px 15px; /* Aumentei o padding para valorizar a imagem 
+    text-align: center;
+    border-radius: 0 0 50px 50px;
+    
+    /* Garante que o conteúdo fique acima da sombra 
+    position: relative; 
+    z-index: 10;
+    
+    background: linear-gradient(135deg, var(--primary-blue), #003d80);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    background-image: url('imagens/cama.png');
+    */    
+}
+.header-logo {
+    max-width: 200px; /* Ajuste o tamanho conforme sua imagem */
+    height: auto;
+    
+    /* 4. Filtro de sombra na própria imagem (Efeito de profundidade 3D) */
+    /* Se a imagem for transparente, a sombra contorna a cama! 
+    filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1));*/
+    
+    margin-bottom: 10px;
+}
+
+h1 {
+    display: block;
+    font-size: 2em;
+    margin-block-start: 0.67em;
+    margin-block-end: 0.67em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+    unicode-bidi: isolate;
+}
+/*
+.logo-container i { font-size: 3.5rem; margin-bottom: 15px; display: block; }
+.logo-container h1 { font-size: 2.5rem; letter-spacing: -1px; }
+*/
+/* --- GALERIA DE MARKETING (EM LINHA) --- */
+.marketing-gallery {
+    width: 100%;
+    overflow-x: auto;
+    padding: 30px 0;
+    -webkit-overflow-scrolling: touch;
+}
+
+.gallery-track {
+    display: flex;
+    gap: 20px;
+    padding: 0 40px;
+    width: max-content;
+}
+
+.gallery-item {
+    flex: 0 0 auto;
+    width: 300px;
+    height: 200px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    transition: transform 0.3s;
+}
+
+.gallery-item:hover { transform: scale(1.03); }
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* --- MENU DO PORTAL (BOTÕES) --- */
+.portal-menu {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.nav-btn {
+    padding: 14px 30px;
+    border: none;
+    border-radius: 30px;
+    background: #ddd;
+    color: #666;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nav-btn.active {
+    background: var(--primary-blue);
+    color: white;
+    box-shadow: 0 5px 15px rgba(0, 86, 179, 0.3);
+}
+
+/* --- GRID DO CATÁLOGO --- */
+.grid-layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.card-item-cardapio {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.tag-categoria-cliente {
+    background: #e3f2fd;
+    color: #1976d2;
+    font-size: 0.7rem;
+    font-weight: bold;
+    padding: 2px 8px;
+    border-radius: 10px;
+    text-transform: uppercase;
+}
+
+.estoque-badge {
+    font-size: 0.85rem;
+    color: #555;
+    margin: 8px 0;
+}
+
+.filtro-container {
+    padding: 15px;
+    text-align: center;
+    background: #f8f9fa;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+#filtro-categoria {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    outline: none;
+}
+
+.card-item-cardapio:hover { transform: translateY(-5px); }
+
+.img-cardapio { width: 100%; height: 180px; object-fit: cover; }
+
+.info-cardapio { padding: 20px; }
+.info-cardapio h3 { margin-bottom: 10px; color: var(--primary-blue); }
+
+.preco-btn {
+    display: block;
+    margin-top: 15px;
+    background: var(--success-green);
+    color: white;
+    text-align: center;
+    padding: 10px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+/* --- ABA DE SOLICITAÇÕES (BUSCA) --- */
+.search-box {
+    background: white;
+    padding: 40px;
+    border-radius: 25px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    max-width: 600px;
+    margin: 20px auto;
+    gap: 20px;
+}
+
+.input-group {
+    display: flex; 
+    flex-direction: column; /* Alinha os itens um abaixo do outro */
+    margin-top: 20px;
+}
+
+.input-group input {
+    flex: 1;
+    padding: 15px;
+    border: 2px solid #eee;
+    border-radius: 12px;
+    outline: none;
+}
+#cliente-whatsapp-consulta {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.btn-buscar {
+    width: 100%;            /* Botão ocupa a largura total para facilitar o toque */
+    background-color: var(--primary-blue);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+.btn-buscar:active {
+    background-color: #004494; /* Feedback de clique no mobile */
+    transform: scale(0.98);
+}
+.card-pedido-cliente {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin-top: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    border-left: 5px solid var(--primary-blue);
+}
+
+.pedido-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.status-badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.status-pendente { background: #ffeaa7; color: #d6a01d; }
+.status-confirmado { background: var(--success-green);; color: darkgreen; }
+/* Adicione isso junto com os outros status-badge */
+.status-agendado { 
+    background: #d4edda; 
+    color: #155724; 
+    border: 1px solid #c3e6cb;
+}
+
+.barra-progresso {
+    background: #eee;
+    height: 8px;
+    border-radius: 10px;
+    margin-top: 15px;
+    overflow: hidden;
+}
+
+.progresso-preenchido {
+    height: 100%;
+    background: var(--success-green);
+    transition: width 0.5s ease;
+}
+
+.dados-cliente-form input {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+/* Status Finalizado para o Cliente */
+.status-finalizada {
+    background-color: #ebedef; /* Cinza claro */
+    color: #7f8c8d;
+    border: 1px solid #bdc3c7;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+/* --- CALENDÁRIO & MODAL --- */
+/* Garante que o fundo escuro cubra TUDO */
+#modal-calendario {
+    display: none; 
+    position: fixed !important; /* Força a posição fixa */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85) !important;
+    z-index: 99999 !important; /* Camada máxima */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch; /* Suaviza scroll no iPhone */
+}
+/* Garante que o conteúdo do calendário apareça */
+.modal-content {
+    background: #fff;
+    margin: 20px auto;
+    width: 95%;
+    max-width: 500px;
+    border-radius: 12px;
+    padding: 15px;
+    position: relative;
+    z-index: 100000 !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+/* Ajuste para o FullCalendar não sumir no branco */
+#calendario-view {
+    max-width: 90%;      /* Não gruda nas bordas do modal */
+    margin: 0 auto;       /* Centraliza */
+    font-size: 0.85em;    /* Diminui a fonte geral (números e dias) */
+}
+
+.close {
+    position: absolute;
+    right: 25px;
+    top: 20px;
+    font-size: 30px;
+    cursor: pointer;
+}
+
+/* Ajuste para inputs de data no mobile */
+input[type="date"] {
+    appearance: none;
+    -webkit-appearance: none;
+    min-height: 45px; /* Altura boa para o toque do dedo */
+    background-color: #fff;
+    font-family: inherit;
+    font-size: 1rem;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 100%; /* Garante que não "vaze" do card */
+    display: block;
+    position: relative;
+}
+
+/* Garante que o ícone do calendário não quebre o layout */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    padding: 5px;
+}
+#calendario-view {
+    height: 320px; /* Força uma altura fixa compacta */
+    overflow: hidden; /* Evita scrolls internos chatos */
+}
+
+/* CORES FORTES NO CALENDÁRIO */
+/* Ajusta o tamanho das células do FullCalendar para dedos */
+.fc-daygrid-day-number {
+    font-size: 1.1em;
+    padding: 8px !important;
+}
+
+/* Ajustar a altura das células para o calendário ficar mais "achatado" */
+.fc .fc-daygrid-day {
+    height: 45px !important; /* Altura menor para as células */
+}
+
+/* Diminuir o cabeçalho (Título e botões Próximo/Anterior) */
+.fc .fc-toolbar {
+    margin-bottom: 5px !important;
+    padding: 5px !important;
+}
+.fc .fc-toolbar-title {
+    font-size: 1.1em !important;
+}
+
+.fc-bg-event { 
+    opacity: 1 !important; 
+    background-color: var(--gray-neutral) !important; /* Cinza ocupado */
+}
+
+.fc-highlight {
+    background-color: #3498db !important; /* Azul seleção */
+    opacity: 0.8 !important;
+}
+.fc .fc-button {
+    padding: 4px 8px !important; /* Botões menores */
+    font-size: 0.8em !important;
+}
+
+.btn-solicitar {
+    width: 100%;
+    background: #25d366;
+    color: white;
+    border: none;
+    padding: 18px;
+    border-radius: 15px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+}
+/* FORMATAÇÃO DO PERÍODO (INPUTS DE DATA) */
+.inputs-reserva {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    background: #f8f9fa; /* Fundo leve para destacar o grupo */
+    padding: 10px;
+    border-radius: 12px;
+}
+
+.inputs-reserva input[type="date"] {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px; /* Cantos arredondados como o campo de nome */
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+    background-color: white;
+    outline: none;
+    cursor: default; /* Como é readonly, removemos o ponteiro de texto */
+    width: 140px;
+    text-align: center;
+}
+
+.inputs-reserva span {
+    font-weight: 600;
+    color: #666;
+    font-size: 0.9rem;
+    text-transform: lowercase;
+}
+
+/* ANIMAÇÃO DE TROCA DE ABA */
+.content-section {
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
