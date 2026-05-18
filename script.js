@@ -1,38 +1,22 @@
 // --- VARIÁVEIS GLOBAIS ---
+let carrinho = [];
 let produtoSelecionado = null;
-let calendarioInstancia = null;
 
-/**
- * 1. INICIALIZAÇÃO
- */
 window.onload = function() {
     console.log("Portal iniciado...");
+    
+    // Força o estado inicial das seções
+    const cat = document.getElementById('secao-catalogo');
+    const sol = document.getElementById('secao-solicitacoes');
+    
+    if (cat) cat.style.display = 'block';
+    if (sol) sol.style.display = 'none';
+
+    // Carrega os produtos do Firebase
     carregarCardapio();
+    atualizarContadorCarrinho();
 };
 
-/**
- * GATILHOS PARA CÁLCULO DE ESTOQUE EM TEMPO REAL
- */
-document.addEventListener('change', function(e) {
-    if (e.target && (e.target.id === 'reserva-ini' || e.target.id === 'reserva-fim')) {
-        const idProd = produtoSelecionado ? produtoSelecionado.id : null;
-        const dataIni = document.getElementById('reserva-ini').value;
-        const dataFim = document.getElementById('reserva-fim').value;
-
-        if (idProd && dataIni && dataFim) {
-            if (dataIni > dataFim) {
-                alert("A data de início não pode ser maior que a data de fim.");
-                return;
-            }
-            // Chama a função de cálculo que você já tem
-            calcularEstoqueDisponivel(idProd, dataIni, dataFim);
-        }
-    }
-});
-
-/**
- * 2. NAVEGAÇÃO DO PORTAL (Alternar Abas)
- */
 function alternarSecao(secaoAlvo) {
     const secaoCatalogo = document.getElementById('secao-catalogo');
     const secaoSolicitacoes = document.getElementById('secao-solicitacoes');
@@ -40,423 +24,328 @@ function alternarSecao(secaoAlvo) {
     const btnSol = document.getElementById('btn-solicitacoes');
 
     if (secaoAlvo === 'catalogo') {
-        secaoCatalogo.style.display = 'block';
-        secaoSolicitacoes.style.display = 'none';
+        secaoCatalogo.style.setProperty('display', 'block', 'important');
+        secaoSolicitacoes.style.setProperty('display', 'none', 'important');
         btnCat.classList.add('active');
         btnSol.classList.remove('active');
     } else {
-        secaoCatalogo.style.display = 'none';
-        secaoSolicitacoes.style.display = 'block';
+        secaoCatalogo.style.setProperty('display', 'none', 'important');
+        secaoSolicitacoes.style.setProperty('display', 'block', 'important');
         btnCat.classList.remove('active');
         btnSol.classList.add('active');
     }
 }
 
-/**
- * 3. CARREGAR CATÁLOGO (VITRINE)
- */
-// 1. Modifique sua função carregarCardapio para usar .once
 async function carregarCardapio() {
-    const lista = document.getElementById('lista-brinquedos');
-    const filtro = document.getElementById('filtro-categoria').value;
+    const lista = document.getElementById('lista-itens'); 
+    const filtro = document.getElementById('filtro-nicho').value; // Captura o nicho selecionado
     
-    if (!lista) return;
-
-    // Mudamos para .once('value') para que o gatilho externo controle a atualização
+    if (!lista) {
+        console.error("Erro: Não encontrei o elemento 'lista-itens' no HTML");
+        return;
+    }
+    
     const snapshot = await database.ref('produtos').once('value');
     const produtos = snapshot.val();
     
-    if (!produtos) {
-        lista.innerHTML = "<p>Nenhum produto cadastrado.</p>";
-        return;
-    }
+    if (!produtos) return;
+    lista.innerHTML = "";
 
-    const dataHoje = new Date().toISOString().split('T')[0];
-    const IDs = Object.keys(produtos);
-
-    const promessas = IDs.map(id => verificarEstoqueDisponivel(id, dataHoje, dataHoje));
-    const estoquesDisponiveis = await Promise.all(promessas);
-
-    lista.innerHTML = ""; 
-
-    IDs.forEach((id, index) => {
+    Object.keys(produtos).forEach(id => {
         const p = produtos[id];
         
+        // --- LÓGICA DE FILTRO ---
+        // 1. Ignora produtos inativos
         if (p.status !== "ativo") return;
+        
+        // 2. Filtra por nicho (se o filtro não for 'todos' e o nicho do produto for diferente do selecionado)
+        // Nota: Garanta que no seu Firebase o campo se chame 'categoria' ou 'nicho'
         if (filtro !== "todos" && p.categoria !== filtro) return;
 
-        const disponivelAgora = estoquesDisponiveis[index];
-        const foto = p.imagem ? p.imagem.split(',')[0] : 'https://via.placeholder.com/300x200';
+        const precoProduto = p.valor || p.preco || 0;
+        const fotoPrincipal = p.imagem ? p.imagem.split(',')[0] : 'https://via.placeholder.com/300';
         
         lista.innerHTML += `
-            <div class="card-item-cardapio" onclick="abrirAgenda('${id}')">
-                <img src="${foto}" class="img-cardapio">
+            <div class="card-item-cardapio" onclick="abrirDetalhesProduto('${id}')">
+                <img src="${fotoPrincipal}" class="img-cardapio">
                 <div class="info-cardapio">
                     <span class="tag-categoria-cliente">${p.categoria || 'Geral'}</span>
                     <h3>${p.nome}</h3>
-                    <p style="font-size: 0.8rem; color: #777; margin-bottom: 8px;">${p.descricao || ''}</p>
-                    <div class="estoque-badge">
-                        <i class="fas fa-boxes"></i> Disponível hoje: 
-                        <strong style="color: ${disponivelAgora > 0 ? '#27ae60' : '#e74c3c'}">
-                            ${disponivelAgora}
-                        </strong>
-                    </div>
-                    <span class="preco-btn">Ver Disponibilidade</span>
+                    <p class="preco-tag">R$ ${parseFloat(precoProduto).toFixed(2).replace('.',',')}</p>
+                    <button class="preco-btn"><i class="fas fa-cart-plus"></i> Ver Opções</button>
                 </div>
-            </div>`;
+            </div>
+        `;
     });
 }
 
-// 2. ADICIONE ISSO LOGO ABAIXO DA FUNÇÃO (FORA DELA)
-// Este é o "Gatilho Mestre": ele vigia os agendamentos e recarrega a vitrine se algo mudar
-database.ref('agendamentos').on('value', () => {
-    console.log("Sistema: Atualizando vitrine devido a mudança nos agendamentos...");
-    carregarCardapio();
-});
+async function abrirDetalhesProduto(id) {
+    const snapshot = await database.ref('produtos/' + id).once('value');
+    const p = snapshot.val();
+    
+    if (!p) return;
 
-/**
- * 4. CONTROLE DO MODAL E CALENDÁRIO
- */
-async function abrirAgenda(idProduto) {
-    // 1. Resetar a interface do estoque antes de carregar o novo produto
-    const containerEstoque = document.getElementById('container-estoque-periodo');
-    const selectQtd = document.getElementById('select-quantidade-reserva');
-    if (containerEstoque) containerEstoque.style.display = 'none';
-    if (selectQtd) selectQtd.innerHTML = "<option>Selecione as datas...</option>";
+    produtoSelecionado = { ...p, id: id };
 
-    // 2. Busca os dados do produto
-    database.ref('produtos/' + idProduto).once('value', async snap => {
-        const dados = snap.val();
-        if (!dados) return;
+    const modal = document.getElementById('modal-detalhes');
+    const conteudo = document.getElementById('conteudo-detalhes');
+    
+    const precoProduto = p.valor || p.preco || 0;
 
-        produtoSelecionado = { id: idProduto, ...dados };
-        document.getElementById('nome-produto-modal').innerText = produtoSelecionado.nome;
-
-        // 3. Mostra o modal
-        const modal = document.getElementById('modal-calendario');
-        modal.style.setProperty('display', 'block', 'important');
-
-        // Define a data de hoje para a consulta inicial rápida
-        const dataDeHoje = new Date().toISOString().split('T')[0];
-        const estoqueRestante = await verificarEstoqueDisponivel(idProduto, dataDeHoje, dataDeHoje);
+    conteudo.innerHTML = `
+        <img src="${p.imagem ? p.imagem.split(',')[0] : 'https://via.placeholder.com/300'}" class="midia-detalhes" style="width: 100%; max-height: 350px; object-fit: contain; border-radius: 12px;">
         
-        const infoEstoque = document.getElementById('info-estoque-modal');
-        if(infoEstoque) {
-            infoEstoque.innerHTML = `Disponibilidade geral: <strong style="color: ${estoqueRestante > 0 ? 'green' : 'red'}">${estoqueRestante} unidade(s)</strong>`;
-        }
-
-        // 4. Aguarda renderização para o FullCalendar
-        setTimeout(() => {
-            renderizarCalendario(idProduto);
-        }, 150);
-    });
-}
-
-function renderizarCalendario(idProduto) {
-    const calendarEl = document.getElementById('calendario-view');
-    
-    // Limpa o conteúdo anterior para não duplicar no mobile
-    calendarEl.innerHTML = "";
-
-    database.ref('agendamentos').once('value', snapshot => {
-        const agendamentos = snapshot.val() || {};
-        const eventosOcupados = [];
-
-        Object.values(agendamentos).forEach(res => {
-            if (res.produto_id === idProduto) {
-                eventosOcupados.push({
-                    start: res.data_inicio,
-                    end: ajustarDataFimFullCalendar(res.data_fim),
-                    display: 'background',
-                    color: '#ff4d4d' // Vermelho para ocupado
-                });
-            }
-        });
-
-        // Destrói instância antiga se existir
-        if (calendarioInstancia) {
-            calendarioInstancia.destroy();
-        }
-
-            calendarioInstancia = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                locale: 'pt-br',
-                selectable: true,
-                longPressDelay: 0,
-                
-                // --- AJUSTES DE TAMANHO ---
-                aspectRatio: 1.0,      /* Aumentar esse número achata o calendário */
-                contentHeight: 'auto',  /* Faz o calendário se ajustar ao tamanho das células */
-                // --------------------------
-            
-                headerToolbar: { 
-                    left: 'prev,next', 
-                    center: 'title', 
-                    right: '' 
-                },
-                events: eventosOcupados,
-            // Dentro da configuração do FullCalendar em renderizarCalendario:
-                select: function(info) {
-                    const inputIni = document.getElementById('reserva-ini');
-                    const inputFim = document.getElementById('reserva-fim');
-
-                    inputIni.value = info.startStr;
-                    
-                    let dFim = new Date(info.end);
-                    dFim.setDate(dFim.getDate() - 1);
-                    const dataFimFormatada = dFim.toISOString().split('T')[0];
-                    inputFim.value = dataFimFormatada;
-
-                    // GATILHO: Dispara o cálculo de estoque assim que seleciona no calendário
-                    calcularEstoqueDisponivel(produtoSelecionado.id, info.startStr, dataFimFormatada);
-                }
-            
-        });
-
-        calendarioInstancia.render();
+        <h2>${p.nome}</h2>
+        <p class="preco-tag">R$ ${parseFloat(precoProduto).toFixed(2).replace('.',',')}</p>
         
-        // Comando mestre para consertar o layout no mobile
-        setTimeout(() => {
-            calendarioInstancia.updateSize();
-        }, 100);
-    });
+        <div class="controle-quantidade" style="display: flex; align-items: center; gap: 15px; margin: 20px 0;">
+            <span>Quantidade:</span>
+            <button class="btn-qtd" onclick="alterarQtd(-1)" type="button">-</button>
+            <span id="qtd-num">1</span>
+            <button class="btn-qtd" onclick="alterarQtd(1)" type="button">+</button>
+        </div>
+
+        <div class="seletor-tamanho">
+            <label>Selecione o Tamanho:</label>
+            <select id="escolha-tamanho" class="input-padrao">
+                <option value="Único">Tamanho Único</option>
+                <option value="P">P</option>
+                <option value="M">M</option>
+                <option value="G">G</option>
+                <option value="GG">GG</option>
+            </select>
+        </div>
+
+        <button onclick="confirmarAdicao()" class="btn-solicitar" style="margin-top: 20px; width: 100%;">
+            <i class="fas fa-shopping-cart"></i> Adicionar ao Carrinho
+        </button>
+    `;
+
+    modal.style.display = "block";
 }
 
-/**
- * 5. SOLICITAÇÃO (FIREBASE + WHATSAPP)
- */
-async function solicitarReserva() {
-    const ini = document.getElementById('reserva-ini').value;
-    const fim = document.getElementById('reserva-fim').value;
-    const nome = document.getElementById('cliente-nome').value;
-    const fone = document.getElementById('cliente-fone').value.replace(/\D/g, "");
-    const endereco = document.getElementById('cliente-endereco').value;
+function alterarQtd(valor) {
+    let campo = document.getElementById('qtd-num');
+    let atual = parseInt(campo.innerText);
+    let novoValor = atual + valor;
     
-    const selectQtd = document.getElementById('select-quantidade-reserva');
-    const quantidadeDesejada = parseInt(selectQtd.value) || 0;
+    if (novoValor >= 1) {
+        campo.innerText = novoValor;
+    }
+}
 
-    if(!ini || !fim) return alert("Selecione as datas no calendário!");
-    if(!nome || !fone || !endereco) return alert("Por favor, preencha todos os campos.");
-    if(quantidadeDesejada <= 0) return alert("Não há estoque disponível para este período.");
+// Função de adição unificada e corrigida
+function confirmarAdicao() {
+    if (!produtoSelecionado) return;
 
-    // --- A MUDANÇA COMEÇA AQUI ---
+    const qtd = parseInt(document.getElementById('qtd-num').innerText);
+    const tamanho = document.getElementById('escolha-tamanho').value;
+    const precoProduto = produtoSelecionado.valor || produtoSelecionado.preco || 0;
     
-    // 1. Pegamos o contato do dono que veio do banco de dados (cadastrado no ADM)
-    // Se não existir no produto, usamos um número padrão como reserva (fallback)
-    const contatoDonoRaw = produtoSelecionado.whatsapp_dono || produtoSelecionado.contato || "5531999999999";
-    const foneFornecedor = contatoDonoRaw.replace(/\D/g, ""); // Limpa parênteses e espaços
-
-    const dadosReserva = {
-        produto_id: produtoSelecionado.id,
-        nome_produto: produtoSelecionado.nome,
-        valor_produto: produtoSelecionado.valor,
-        data_inicio: ini,
-        data_fim: fim,
-        cliente_nome: nome,
-        cliente_fone: fone,
-        cliente_endereco: endereco,
-        quantidade_alugada: quantidadeDesejada,
-        status: "pendente",
-        timestamp: Date.now()
+    const item = {
+        id: produtoSelecionado.id,
+        nome: produtoSelecionado.nome,
+        preco: parseFloat(precoProduto), 
+        tamanho: tamanho,
+        quantidade: qtd,
+        imagem: produtoSelecionado.imagem ? produtoSelecionado.imagem.split(',')[0] : 'https://via.placeholder.com/300'
     };
 
-    database.ref('solicitacoes').push(dadosReserva).then(() => {
-        const msg = `Olá! Fiz uma *solicitação de reserva* pelo portal:%0A%0A` +
-                    `*Produto:* ${produtoSelecionado.nome}%0A` +
-                    `*Quantidade:* ${quantidadeDesejada} unidade(s)%0A` +
-                    `*Período:* ${ini.split('-').reverse().join('/')} até ${fim.split('-').reverse().join('/')}%0A` +
-                    `*Cliente:* ${nome}%0A` +
-                    `*Endereço:* ${endereco}`;
+    carrinho.push(item);
+    localStorage.setItem('carrinho_fp', JSON.stringify(carrinho));
+    
+    fecharModal('modal-detalhes');
+    atualizarContadorCarrinho();
+    
+    alert(`${qtd}x ${item.nome} (Tam: ${tamanho}) adicionado ao carrinho!`);
+}
 
-        // 2. Agora usamos a variável dinâmica foneFornecedor
-        const linkWhats = `https://wa.me/${foneFornecedor}?text=${msg}`;
-        
-        window.open(linkWhats, '_blank');
-        
-        alert("Solicitação enviada com sucesso!");
-        fecharModalCalendario();
-    }).catch(error => {
-        console.error("Erro ao salvar:", error);
-        alert("Erro ao enviar solicitação.");
+function atualizarContadorCarrinho() {
+    const salvo = localStorage.getItem('carrinho_fp');
+    if(salvo) carrinho = JSON.parse(salvo);
+
+    const btn = document.getElementById('btn-carrinho-flutuante');
+    const contador = document.getElementById('contador-carrinho');
+    
+    // Contabiliza o total de itens (somando as quantidades)
+    const totalItens = carrinho.reduce((acc, item) => acc + item.quantidade, 0);
+    
+    if (totalItens > 0) {
+        if (btn) btn.style.display = "flex";
+        if (contador) contador.innerText = totalItens;
+    } else {
+        if (btn) btn.style.display = "none";
+    }
+}
+
+function abrirCarrinho() {
+    const modal = document.getElementById('modal-carrinho');
+    const listaHtml = document.getElementById('itens-carrinho');
+    const totalHtml = document.getElementById('total-carrinho');
+    
+    if (carrinho.length === 0) {
+        listaHtml.innerHTML = "<p>Seu carrinho está vazio.</p>";
+        totalHtml.innerText = "";
+    } else {
+        let total = 0;
+        listaHtml.innerHTML = carrinho.map((item, index) => {
+            const subtotalItem = item.preco * item.quantidade;
+            total += subtotalItem;
+            
+            return `
+                <div class="item-carrinho-linha" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                    <img src="${item.imagem}" width="40" style="border-radius: 5px;">
+                    <div style="flex: 1; margin-left: 10px;">
+                        <strong>${item.nome}</strong><br>
+                        <small>Qtd: ${item.quantidade} | Tam: ${item.tamanho}</small>
+                    </div>
+                    <span style="margin-right: 10px;">R$ ${subtotalItem.toFixed(2).replace('.',',')}</span>
+                    <button onclick="removerDoCarrinho(${index})" style="background: none; border: none; color: red; cursor: pointer;"><i class="fas fa-trash"></i></button>
+                </div>
+            `;
+        }).join('');
+        totalHtml.innerHTML = `<strong>Total: R$ ${total.toFixed(2).replace('.',',')}</strong>`;
+    }
+    modal.style.display = "block";
+}
+
+function removerDoCarrinho(index) {
+    carrinho.splice(index, 1);
+    localStorage.setItem('carrinho_fp', JSON.stringify(carrinho));
+    abrirCarrinho();
+    atualizarContadorCarrinho();
+}
+
+function fecharModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) modal.style.display = "none";
+}
+
+async function finalizarCompraFluxoCompleto() {
+    const whatsapp = document.getElementById('whatsapp-cliente-finalizar').value.replace(/\D/g, '');
+    
+    // 1. Validação simples
+    if (whatsapp.length < 10) {
+        alert("Por favor, insira um WhatsApp válido (com DDD) para que você possa consultar seu pedido depois!");
+        return;
+    }
+
+    if (carrinho.length === 0) return;
+
+    let total = 0;
+    carrinho.forEach(item => total += (item.preco * item.quantidade));
+
+    // 2. Criar objeto do pedido para o Firebase
+    const novoPedido = {
+        cliente_whatsapp: whatsapp,
+        itens: carrinho,
+        valor_total: total,
+        data: new Date().toISOString(),
+        status: "pendente" // O admin mudará isso depois
+    };
+
+    try {
+        // 3. Salva no Firebase na pasta 'pedidos'
+        // Isso permite que a função de "Consultar Pedidos" funcione
+        await database.ref('pedidos').push(novoPedido);
+
+        // 4. Prepara e envia a mensagem para o WhatsApp do vendedor
+        enviarMensagemWhatsApp(whatsapp, total);
+
+        // 5. Limpa tudo
+        carrinho = [];
+        localStorage.removeItem('carrinho_fp');
+        atualizarContadorCarrinho();
+        fecharModal('modal-carrinho');
+
+    } catch (error) {
+        console.error("Erro ao salvar pedido:", error);
+        alert("Erro ao processar pedido. Tente novamente.");
+    }
+}
+
+// Função auxiliar para montar a mensagem
+function enviarMensagemWhatsApp(whatsappCliente, total) {
+    let mensagem = `*NOVO PEDIDO - FRUTO PROIBIDO*\n`;
+    mensagem += `*Cliente (WA):* ${whatsappCliente}\n`;
+    mensagem += `--------------------------\n`;
+
+    carrinho.forEach((item, i) => {
+        const subtotalItem = item.preco * item.quantidade;
+        mensagem += `${i+1}. *${item.quantidade}x ${item.nome}* (Tam: ${item.tamanho}) - R$ ${subtotalItem.toFixed(2)}\n`;
     });
-}
-/**
- * 6. FUNÇÕES AUXILIARES
- */
-function fecharModalCalendario() {
-    document.getElementById('modal-calendario').style.display = 'none';
-}
 
-function ajustarDataFimFullCalendar(dataString) {
-    if (!dataString) return null;
-    let d = new Date(dataString);
-    d.setDate(d.getDate() + 1);
-    return d.toISOString().split('T')[0];
+    mensagem += `--------------------------\n`;
+    mensagem += `*TOTAL: R$ ${total.toFixed(2).replace('.',',')}*\n\n`;
+    mensagem += `_Pedido registrado no sistema!_`;
+
+    const foneVendedor = "5531988712203"; 
+    const url = `https://wa.me/${foneVendedor}?text=${encodeURIComponent(mensagem)}`;
+    window.open(url, '_blank');
 }
 
-// Fechar modal ao clicar fora
-window.onclick = function(event) {
-    const modal = document.getElementById('modal-calendario');
-    if (event.target == modal) fecharModalCalendario();
-};
+async function consultarPedidosCliente() {
+    const whatsappBusca = document.getElementById('telefone-busca').value.replace(/\D/g, '');
+    const listaHistorico = document.getElementById('historico-pedidos');
 
-/**
- * 7. CONSULTAR PEDIDOS (Atualizado para incluir status Agendado)
- */
-function consultarPedidosCliente() {
-    const whatsConsulta = document.getElementById('cliente-whatsapp-consulta').value.replace(/\D/g, "");
-    const containerHistorico = document.getElementById('historico-pedidos');
+    if (whatsappBusca.length < 10) {
+        alert("Por favor, digite seu WhatsApp com DDD para buscar.");
+        return;
+    }
 
-    if (!whatsConsulta) return alert("Digite o número do seu WhatsApp cadastrado.");
+    listaHistorico.innerHTML = "<p style='text-align:center;'>Buscando seus pedidos...</p>";
 
-    containerHistorico.innerHTML = "<p>Buscando suas solicitações...</p>";
+    try {
+        // Busca na coleção 'pedidos' filtrando pelo WhatsApp do cliente
+        const snapshot = await database.ref('pedidos')
+            .orderByChild('cliente_whatsapp')
+            .equalTo(whatsappBusca)
+            .once('value');
 
-    database.ref('solicitacoes').orderByChild('cliente_fone').equalTo(whatsConsulta).once('value', snapshot => {
-        containerHistorico.innerHTML = "";
         const pedidos = snapshot.val();
 
         if (!pedidos) {
-            containerHistorico.innerHTML = "<p class='aviso'>Nenhuma solicitação encontrada para este número.</p>";
+            listaHistorico.innerHTML = `
+                <div class="card-pedido-cliente" style="border-left-color: #e74c3c; text-align:center;">
+                    <p>Nenhum pedido encontrado para este número.</p>
+                    <small>Verifique se digitou o número corretamente ou se já finalizou alguma compra.</small>
+                </div>`;
             return;
         }
 
-        Object.values(pedidos).reverse().forEach(p => {
-            let statusClass = '';
-            let statusTexto = '';
-            let larguraProgresso = '0%';
+        listaHistorico.innerHTML = ""; // Limpa o "Buscando..."
 
-            // --- LÓGICA DE STATUS ATUALIZADA ---
-            switch (p.status) {
-                case 'pendente':
-                    statusClass = 'status-pendente';
-                    statusTexto = 'Aguardando Fornecedor';
-                    larguraProgresso = '33%';
-                    break;
-                case 'agendado': // Novo caso para o status "agendado"
-                case 'confirmado':
-                    statusClass = 'status-confirmado'; // Usa o verde do confirmado
-                    statusTexto = 'Reserva Agendada';
-                    larguraProgresso = '75%'; // Barra bem mais cheia
-                    break;
-                case 'finalizada':
-                    statusClass = 'status-finalizada';
-                    statusTexto = 'Locação Concluída';
-                    larguraProgresso = '100%';
-                    break;
-                default:
-                    statusClass = 'status-pendente';
-                    statusTexto = p.status;
-                    larguraProgresso = '10%';
-            }
+        // Transforma o objeto em array e inverte para mostrar o mais recente primeiro
+        const listaOrdenada = Object.keys(pedidos).reverse();
 
-            containerHistorico.innerHTML += `
-                <div class="card-pedido-cliente" style="${p.status === 'finalizada' ? 'opacity: 0.85;' : ''}">
+        listaOrdenada.forEach(id => {
+            const pedido = pedidos[id];
+            const dataFormatada = new Date(pedido.data).toLocaleDateString('pt-BR');
+            
+            // Cria o HTML de cada pedido encontrado
+            listaHistorico.innerHTML += `
+                <div class="card-pedido-cliente">
                     <div class="pedido-header">
-                        <strong>${p.nome_produto}</strong>
-                        <span class="status-badge ${statusClass}">${statusTexto}</span>
+                        <span><strong>Pedido:</strong> #${id.slice(-5).toUpperCase()}</span>
+                        <span class="status-badge status-${pedido.status || 'pendente'}">
+                            ${(pedido.status || 'pendente').toUpperCase()}
+                        </span>
                     </div>
-                    <div class="pedido-detalhes">
-                        <p><i class="far fa-calendar-alt"></i> ${p.data_inicio.split('-').reverse().join('/')} até ${p.data_fim.split('-').reverse().join('/')}</p>
-                        <p><i class="fas fa-map-marker-alt"></i> ${p.cliente_endereco}</p>
+                    <div class="pedido-corpo">
+                        <p><i class="far fa-calendar-alt"></i> Data: ${dataFormatada}</p>
+                        <p><i class="fas fa-coins"></i> Total: <strong>R$ ${pedido.valor_total.toFixed(2).replace('.', ',')}</strong></p>
+                        <hr style="margin: 10px 0; border: 0; border-top: 1px solid #eee;">
+                        <small>Itens: ${pedido.itens.map(i => i.nome).join(', ')}</small>
                     </div>
-                    
                     <div class="barra-progresso">
-                        <div class="progresso-preenchido" style="width: ${larguraProgresso}; background-color: ${(p.status === 'finalizada' || p.status === 'agendado') ? 'var(--success-green)' : ''}"></div>
+                        <div class="progresso-preenchido" style="width: ${pedido.status === 'pendente' ? '30%' : '100%'}"></div>
                     </div>
-                    
-                    ${p.status === 'finalizada' ? '<p style="font-size: 0.75rem; color: var(--success-green); margin-top: 8px; text-align: center; font-weight: bold;">✓ Equipamento devolvido e locação finalizada</p>' : ''}
                 </div>
             `;
         });
-    });
-}
-// Adicione isso ao seu arquivo JS para garantir que o clique funcione no mobile
-document.querySelectorAll('input[type="date"]').forEach(input => {
-    input.addEventListener('click', function() {
-        if (typeof this.showPicker === 'function') {
-            this.showPicker(); // Força a abertura do seletor nativo do celular
-        }
-    });
-});
 
-/**
- * 8. CONSULTAR ESTOQUE(Atualizado com status Finalizada)
- */
-async function verificarEstoqueDisponivel(idProduto, dataInicio, dataFim) {
-    const snapProd = await database.ref('produtos/' + idProduto).once('value');
-    const produto = snapProd.val();
-    const estoqueTotal = parseInt(produto.estoque_total) || 1;
-
-    const snapAgend = await database.ref('agendamentos').once('value');
-    const agendamentos = snapAgend.val() || {};
-
-    let ocupados = 0;
-
-    Object.values(agendamentos).forEach(res => {
-        // --- A MUDANÇA ESTÁ AQUI ---
-        // Só contamos como 'ocupado' se o produto for o mesmo E o status NÃO for finalizado
-        if (res.produto_id === idProduto && res.status !== 'finalizada') {
-            
-            // Verifica se as datas coincidem
-            if (dataInicio <= res.data_fim && dataFim >= res.data_inicio) {
-                ocupados++;
-            }
-        }
-    });
-
-    return estoqueTotal - ocupados;
-}
-
-//  A Lógica de Cálculo (JavaScript)
-async function calcularEstoqueDisponivel(idProduto, dataInicio, dataFim) {
-    if (!dataInicio || !dataFim) return;
-
-    // 1. Busca o estoque total do produto
-    const prodSnap = await database.ref('produtos/' + idProduto).once('value');
-    const produto = prodSnap.val();
-    const estoqueTotal = parseInt(produto.estoque_total) || 1;
-
-    // 2. Busca todos os agendamentos ativos para este produto
-    const agendSnap = await database.ref('agendamentos')
-        .orderByChild('produto_id')
-        .equalTo(idProduto)
-        .once('value');
-    
-    const agendamentos = agendSnap.val() || {};
-    let ocupadosNoPeriodo = 0;
-
-    // 3. Verifica sobreposição de datas
-    // Lógica: O item está ocupado se (InicioPedida <= FimExistente) E (FimPedido >= InicioExistente)
-    Object.values(agendamentos).forEach(res => {
-        if (res.status !== 'finalizada') {
-            const resInicio = res.data_inicio;
-            const resFim = res.data_fim;
-
-            if (dataInicio <= resFim && dataFim >= resInicio) {
-                // Se você salva a quantidade alugada em cada reserva, some res.quantidade
-                // Se for sempre 1 por reserva, some 1
-                ocupadosNoPeriodo += (parseInt(res.quantidade_alugada) || 1);
-            }
-        }
-    });
-
-    const disponivel = estoqueTotal - ocupadosNoPeriodo;
-    const campoDisponivel = document.getElementById('qtd-disponivel-periodo');
-    const selectQtd = document.getElementById('select-quantidade-reserva');
-    const container = document.getElementById('container-estoque-periodo');
-
-    container.style.display = "block";
-    campoDisponivel.innerText = disponivel > 0 ? disponivel : 0;
-
-    // 4. Preenche o Select com as opções disponíveis
-    selectQtd.innerHTML = "";
-    if (disponivel <= 0) {
-        selectQtd.innerHTML = "<option value='0'>Indisponível para estas datas</option>";
-        selectQtd.disabled = true;
-    } else {
-        selectQtd.disabled = false;
-        for (let i = 1; i <= disponivel; i++) {
-            selectQtd.innerHTML += `<option value="${i}">${i} unidade(s)</option>`;
-        }
+    } catch (error) {
+        console.error("Erro na busca:", error);
+        listaHistorico.innerHTML = "<p>Erro ao conectar com o servidor. Tente novamente.</p>";
     }
 }
