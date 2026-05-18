@@ -42,41 +42,11 @@ body {
     box-shadow: 0 10px 25px rgba(0,0,0,0.08);
     
     /* 3. Borda fina para definir o limite entre branco e branco */
-    border-bottom: 1px solid #eee;
-
-    /*
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    
-     1. MUDANÇA: Sombra mais forte e espalhada para dar profundidade 
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
-    
-     2. MUDANÇA: Cor do texto (Se a imagem é branca, o texto precisa de cor!) 
-    color: #333; /* Use um cinza escuro ou a cor primária do seu sistema */
-    
-    /* Mantenha o restante 
-    padding: 10px 15px; /* Aumentei o padding para valorizar a imagem 
-    text-align: center;
-    border-radius: 0 0 50px 50px;
-    
-    /* Garante que o conteúdo fique acima da sombra 
-    position: relative; 
-    z-index: 10;
-    
-    background: linear-gradient(135deg, var(--primary-blue), #003d80);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    background-image: url('imagens/cama.png');
-    */    
+    border-bottom: 1px solid #eee;  
 }
 .header-logo {
     max-width: 200px; /* Ajuste o tamanho conforme sua imagem */
-    height: auto;
-    
-    /* 4. Filtro de sombra na própria imagem (Efeito de profundidade 3D) */
-    /* Se a imagem for transparente, a sombra contorna a cama! 
-    filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1));*/
-    
+    height: auto;    
     margin-bottom: 10px;
 }
 
@@ -91,8 +61,7 @@ h1 {
     unicode-bidi: isolate;
 }
 /*
-.logo-container i { font-size: 3.5rem; margin-bottom: 15px; display: block; }
-.logo-container h1 { font-size: 2.5rem; letter-spacing: -1px; }
+
 */
 /* --- GALERIA DE MARKETING (EM LINHA) --- */
 .marketing-gallery {
@@ -487,3 +456,340 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+/* Substitua ou adicione estes estilos */
+.preco-venda {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--primary-blue); /* Vinho sofisticado [cite: 5] */
+    margin: 10px 0;
+}
+
+.descricao-curta {
+    font-size: 0.85rem;
+    color: #666;
+    height: 40px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+/* Ajuste o botão para parecer um botão de compra */
+.preco-btn {
+    background: #25d366 !important; /* Verde WhatsApp */
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    transition: 0.2s;
+}
+
+.preco-btn:hover {
+    background: #128c7e !important;
+    transform: scale(1.02);
+}
+
+/* Botão do Carrinho Flutuante */
+#btn-carrinho-flutuante {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--primary-blue); /* #7b001c */
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    z-index: 999;
+    cursor: pointer;
+}
+
+#contador-carrinho {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: var(--success-green);
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    border-radius: 50%;
+}
+
+/* Galeria no Modal */
+.galeria-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    padding-bottom: 10px;
+    scroll-snap-type: x mandatory;
+}
+
+.img-galeria-modal {
+    width: 250px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 10px;
+    scroll-snap-align: start;
+}
+
+.seletor-tamanho {
+    margin: 20px 0;
+    text-align: left;
+}
+
+.input-padrao {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    margin-top: 5px;
+}
+
+/* Melhoria no grid da vitrine */
+.vitrine-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 15px;
+    padding: 10px;
+}
+
+/* Tag de preço chamativa */
+.preco-tag {
+    color: #7b001c;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 5px 0;
+}
+
+/* Estilo do item no carrinho */
+.item-carrinho-linha {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.total-carrinho-box {
+    padding: 15px;
+    font-size: 1.3rem;
+    text-align: right;
+    color: #7b001c;
+}
+
+.btn-confirmar-venda {
+    width: 100%;
+    padding: 15px;
+    background: #7b001c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-top: 15px;
+    cursor: pointer;
+}
+
+.input-estilizado {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+/* De: #lista-brinquedos */
+#lista-itens {
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 20px;
+    min-height: 200px;
+    background: white; /* Para você ver o container */
+}
+
+/* Container que segura os botões */
+.abas-navegacao {
+    display: flex !important; /* Força o comportamento flexível */
+    flex-direction: row !important; /* Garante que fiquem LADO A LADO */
+    justify-content: center !important; /* CENTRALIZA no meio da tela */
+    align-items: center;
+    gap: 10px; /* Espaçamento entre os botões */
+    padding: 15px 10px;
+    background-color: #ffffff;
+    width: 100%;
+    border-bottom: 1px solid #eee;
+}
+
+/* Estilo individual dos botões */
+.tab-btn {
+    flex: 0 1 auto; /* Impede que o botão ocupe a largura toda */
+    min-width: 130px; /* Largura mínima confortável */
+    padding: 10px 15px;
+    border: none;
+    border-radius: 25px;
+    background-color: #f0f0f0;
+    color: #444;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+/* Estado do botão clicado */
+.tab-btn.active {
+    background-color: #7b001c !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 8px rgba(123, 0, 28, 0.2);
+}
+
+/* Isso garante que qualquer modal comece invisível */
+.modal {
+    display: none; /* ESCONDE POR PADRÃO */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.6); /* Fundo escuro semi-transparente */
+    overflow: auto;
+}
+
+/* Garante que o conteúdo do modal esteja centralizado */
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+}
+
+/* Container da imagem dentro do modal */
+#conteudo-detalhes img, 
+#conteudo-detalhes .midia-detalhes {
+    width: 100%;            /* Ocupa a largura total do modal */
+    max-height: 350px;      /* Limita a altura para não expulsar os botões da tela */
+    object-fit: contain;    /* Mantém a proporção da foto sem cortar */
+    border-radius: 12px;    /* Deixa as bordas arredondadas */
+    background-color: #f9f9f9; 
+    margin-bottom: 15px;    /* Espaço para o texto abaixo */
+    display: block;
+}
+
+/* Ajuste para o conteúdo do modal respirar */
+.modal-content {
+    max-height: 90vh;       /* Não deixa o modal ser maior que a tela */
+    overflow-y: auto;       /* Se o texto for longo, cria barra de rolagem interna */
+}
+
+.controle-quantidade {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.btn-qtd {
+    background: #eee;
+    border: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-qtd:hover {
+    background: #ddd;
+}
+
+#qtd-num {
+    font-size: 1.1rem;
+    font-weight: bold;
+    min-width: 20px;
+    text-align: center;
+}
+
+/* Container da busca para centralizar e dar espaçamento */
+.card-consulta {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    max-width: 500px;
+    margin: 20px auto;
+    text-align: center;
+}
+
+.card-consulta h3 {
+    color: #7b001c; /* Tom vinho da marca */
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+/* Container do Input e Botão */
+.busca-pedido {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Estilização do Campo de Texto (WhatsApp) */
+#telefone-busca {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #f0f0f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    outline: none;
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+#telefone-busca:focus {
+    border-color: #7b001c;
+    background-color: #fff;
+    box-shadow: 0 0 8px rgba(123, 0, 28, 0.1);
+}
+
+/* Estilização do Botão de Consultar */
+.btn-buscar {
+    width: 100%;
+    background-color: #7b001c; /* Vinho harmônico com a logo */
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: transform 0.2s, background 0.3s;
+}
+
+.btn-buscar:hover {
+    background-color: #5a0015;
+    transform: translateY(-2px);
+}
+
+.btn-buscar:active {
+    transform: scale(0.98);
+}
+
