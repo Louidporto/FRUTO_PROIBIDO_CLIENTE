@@ -247,11 +247,18 @@ function fecharModal(id) {
 }
 
 async function finalizarCompraFluxoCompleto() {
+    // Captura os valores dos inputs
+    const nomeCliente = document.getElementById('nome-cliente-finalizar').value.trim();
     const whatsapp = document.getElementById('whatsapp-cliente-finalizar').value.replace(/\D/g, '');
     
-    // 1. Validação simples
+    // 1. Validações simples
+    if (nomeCliente.length < 3) {
+        alert("Por favor, insira seu nome para identificarmos o pedido!");
+        return;
+    }
+
     if (whatsapp.length < 10) {
-        alert("Por favor, insira um WhatsApp válido (com DDD) para que você possa consultar seu pedido depois!");
+        alert("Por favor, insira um WhatsApp válido (com DDD) para consultar seu pedido depois!");
         return;
     }
 
@@ -260,22 +267,22 @@ async function finalizarCompraFluxoCompleto() {
     let total = 0;
     carrinho.forEach(item => total += (item.preco * item.quantidade));
 
-    // 2. Criar objeto do pedido para o Firebase
+    // 2. Criar objeto do pedido incluindo o NOME do cliente
     const novoPedido = {
+        cliente_nome: nomeCliente,
         cliente_whatsapp: whatsapp,
         itens: carrinho,
         valor_total: total,
         data: new Date().toISOString(),
-        status: "pendente" // O admin mudará isso depois
+        status: "pendente"
     };
 
     try {
         // 3. Salva no Firebase na pasta 'pedidos'
-        // Isso permite que a função de "Consultar Pedidos" funcione
         await database.ref('pedidos').push(novoPedido);
 
-        // 4. Prepara e envia a mensagem para o WhatsApp do vendedor
-        enviarMensagemWhatsApp(whatsapp, total);
+        // 4. Prepara e envia a mensagem para o WhatsApp do vendedor (Passando o nome agora)
+        enviarMensagemWhatsApp(nomeCliente, whatsapp, total);
 
         // 5. Limpa tudo
         carrinho = [];
@@ -283,16 +290,21 @@ async function finalizarCompraFluxoCompleto() {
         atualizarContadorCarrinho();
         fecharModal('modal-carrinho');
 
+        // Limpa os campos do modal
+        document.getElementById('nome-cliente-finalizar').value = "";
+        document.getElementById('whatsapp-cliente-finalizar').value = "";
+
     } catch (error) {
         console.error("Erro ao salvar pedido:", error);
         alert("Erro ao processar pedido. Tente novamente.");
     }
 }
 
-// Função auxiliar para montar a mensagem
-function enviarMensagemWhatsApp(whatsappCliente, total) {
-    let mensagem = `*NOVO PEDIDO - FRUTO PROIBIDO*\n`;
-    mensagem += `*Cliente (WA):* ${whatsappCliente}\n`;
+// Função auxiliar para montar a mensagem (Atualizada com Nome)
+function enviarMensagemWhatsApp(nomeCliente, whatsappCliente, total) {
+    let mensagem = `*NOVO PEDIDO - FRUTO PROIBIDO*\n\n`;
+    mensagem += `👤 *Cliente:* ${nomeCliente}\n`;
+    mensagem += `📱 *WhatsApp:* ${whatsappCliente}\n`;
     mensagem += `--------------------------\n`;
 
     carrinho.forEach((item, i) => {
