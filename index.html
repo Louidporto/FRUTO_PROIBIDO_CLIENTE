@@ -52,14 +52,14 @@
 </nav>
 
 <main class="container">
-    <section id="secao-catalogo" style="display: block;">
-        <div class="filtro-container">
-            <label for="filtro-nicho"><i class="fas fa-filter"></i> Filtrar por:</label>
-            <select id="filtro-nicho" onchange="carregarCardapio()" class="input-padrao">
-                <option value="todos">Todos os Itens</option>
-                <option value="Conjuntos">Conjuntos</option>                
-                <option value="Calcinhas">Calcinhas</option>                
-            </select>
+    <section id="secao-catalogo" style="display: block;"> 
+      <div class="filtro-container">
+            <div class="botoes-filtro-track">
+                <button class="btn-filtro active" onclick="filtrarCategoria(event, 'todos')">✨ Todos</button>
+                <button class="btn-filtro" onclick="filtrarCategoria(event, 'Calcinhas')">👙 Calcinhas</button>
+                <button class="btn-filtro" onclick="filtrarCategoria(event, 'Conjuntos')">🛍️ Conjuntos</button>
+                <button class="btn-filtro" onclick="filtrarCategoria(event, 'Acessórios')">💎 Acessórios</button>
+            </div>
         </div>
         <div id="lista-itens" class="vitrine-grid"></div>
     </section>
@@ -68,7 +68,7 @@
         <div class="card-consulta">
             <h3><i class="fas fa-list-ul"></i> Consultar meus Pedidos</h3>
             <div class="busca-pedido">
-                <input type="tel" id="telefone-busca" placeholder="Digite seu WhatsApp (ex: 31988712203)">
+                <input type="tel" id="telefone-busca" placeholder="Digite seu WhatsApp (ex: 31999990000)">
                 <button onclick="consultarPedidosCliente()" class="btn-buscar">
                     <i class="fas fa-search"></i> Buscar Pedidos
                 </button>
@@ -100,10 +100,10 @@
 
         <div style="margin: 15px 0; padding: 15px; border: 1px solid #eee; border-radius: 12px; background: #f9f9f9;">
             <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #7b001c;">
-                Seu WhatsApp para consulta:
+                Seu WhatsApp:
             </label>
             <input type="tel" id="whatsapp-cliente-finalizar" 
-                   placeholder="Ex: 31988712203" 
+                   placeholder="(ex: 31999990000)" 
                    class="input-padrao" 
                    style="text-align: center; border: 2px solid #ddd;">
             <small style="color: #666; font-size: 0.8rem; display: block; margin-top: 5px;">
