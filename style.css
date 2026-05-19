@@ -1,4 +1,6 @@
-/* --- CONFIGURAÇÕES GERAIS --- */
+/* ==========================================================================
+   1. CONFIGURAÇÕES GERAIS E VARIÁVEIS
+   ========================================================================== */
 :root {
     --primary-blue: #7b001c;
     --success-green: #2ecc71;
@@ -27,43 +29,35 @@ body {
     padding: 20px;
 }
 
-/* --- HEADER DE MARKETING --- */
-.main-header {
-    /* 1. Fundo levemente off-white para destacar a imagem branca 
-    background: linear-gradient(to bottom, #ffffff, #f9f9f9);*/
-
-    background: linear-gradient(to bottom, #f5e9e1, #f9f9f9);
-    
-    text-align: center;
-    padding: 20px 15px;
-    border-radius: 0 0 50px 50px;
-    
-    /* 2. Sombra projetada (Dá a sensação de que o header está flutuando) */
-    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-    
-    /* 3. Borda fina para definir o limite entre branco e branco */
-    border-bottom: 1px solid #eee;  
-}
-.header-logo {
-    max-width: 200px; /* Ajuste o tamanho conforme sua imagem */
-    height: auto;    
-    margin-bottom: 10px;
-}
-
 h1 {
     display: block;
     font-size: 2em;
     margin-block-start: 0.67em;
     margin-block-end: 0.67em;
-    margin-inline-start: 0px;
-    margin-inline-end: 0px;
     font-weight: bold;
-    unicode-bidi: isolate;
 }
-/*
 
-*/
-/* --- GALERIA DE MARKETING (EM LINHA) --- */
+/* ==========================================================================
+   2. HEADER DE MARKETING
+   ========================================================================== */
+.main-header {
+    background: linear-gradient(to bottom, #f5e9e1, #f9f9f9);
+    text-align: center;
+    padding: 20px 15px;
+    border-radius: 0 0 50px 50px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    border-bottom: 1px solid #eee;  
+}
+
+.header-logo {
+    max-width: 200px;
+    height: auto;    
+    margin-bottom: 10px;
+}
+
+/* ==========================================================================
+   3. BANNER / GALERIA DE MARKETING (CARROSSEL HORIZONTAL)
+   ========================================================================== */
 .marketing-gallery {
     width: 100%;
     overflow-x: auto;
@@ -89,544 +83,31 @@ h1 {
 }
 
 .gallery-item:hover { transform: scale(1.03); }
-
 .gallery-item img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-/* --- MENU DO PORTAL (BOTÕES) --- */
-.portal-menu {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 30px;
-}
-
-.nav-btn {
-    padding: 14px 30px;
-    border: none;
-    border-radius: 30px;
-    background: #ddd;
-    color: #666;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.3s;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.nav-btn.active {
-    background: var(--primary-blue);
-    color: white;
-    box-shadow: 0 5px 15px rgba(0, 86, 179, 0.3);
-}
-
-/* --- GRID DO CATÁLOGO --- */
-.grid-layout {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 25px;
-}
-
-.card-item-cardapio {
-    background: white;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.tag-categoria-cliente {
-    background: #e3f2fd;
-    color: #1976d2;
-    font-size: 0.7rem;
-    font-weight: bold;
-    padding: 2px 8px;
-    border-radius: 10px;
-    text-transform: uppercase;
-}
-
-.estoque-badge {
-    font-size: 0.85rem;
-    color: #555;
-    margin: 8px 0;
-}
-
-.filtro-container {
-    padding: 15px;
-    text-align: center;
-    background: #f8f9fa;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #ddd;
-}
-
-#filtro-categoria {
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    outline: none;
-}
-
-.card-item-cardapio:hover { transform: translateY(-5px); }
-
-.img-cardapio { width: 100%; height: 180px; object-fit: cover; }
-
-.info-cardapio { padding: 20px; }
-.info-cardapio h3 { margin-bottom: 10px; color: var(--primary-blue); }
-
-.preco-btn {
-    display: block;
-    margin-top: 15px;
-    background: var(--success-green);
-    color: white;
-    text-align: center;
-    padding: 10px;
-    border-radius: 10px;
-    font-weight: bold;
-}
-
-/* --- ABA DE SOLICITAÇÕES (BUSCA) --- */
-.search-box {
-    background: white;
-    padding: 40px;
-    border-radius: 25px;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-    max-width: 600px;
-    margin: 20px auto;
-    gap: 20px;
-}
-
-.input-group {
-    display: flex; 
-    flex-direction: column; /* Alinha os itens um abaixo do outro */
-    margin-top: 20px;
-}
-
-.input-group input {
-    flex: 1;
-    padding: 15px;
-    border: 2px solid #eee;
-    border-radius: 12px;
-    outline: none;
-}
-#cliente-whatsapp-consulta {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 1rem;
-}
-
-.btn-buscar {
-    width: 100%;            /* Botão ocupa a largura total para facilitar o toque */
-    background-color: var(--primary-blue);
-    color: white;
-    border: none;
-    padding: 14px;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-.btn-buscar:active {
-    background-color: #004494; /* Feedback de clique no mobile */
-    transform: scale(0.98);
-}
-.card-pedido-cliente {
-    background: white;
-    border-radius: 15px;
-    padding: 20px;
-    margin-top: 15px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    border-left: 5px solid var(--primary-blue);
-}
-
-.pedido-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.status-badge {
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: bold;
-}
-
-.status-pendente { background: #ffeaa7; color: #d6a01d; }
-.status-confirmado { background: var(--success-green);; color: darkgreen; }
-/* Adicione isso junto com os outros status-badge */
-.status-agendado { 
-    background: #d4edda; 
-    color: #155724; 
-    border: 1px solid #c3e6cb;
-}
-
-.barra-progresso {
-    background: #eee;
-    height: 8px;
-    border-radius: 10px;
-    margin-top: 15px;
-    overflow: hidden;
-}
-
-.progresso-preenchido {
-    height: 100%;
-    background: var(--success-green);
-    transition: width 0.5s ease;
-}
-
-.dados-cliente-form input {
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 0.9rem;
-}
-
-/* Status Finalizado para o Cliente */
-.status-finalizada {
-    background-color: #ebedef; /* Cinza claro */
-    color: #7f8c8d;
-    border: 1px solid #bdc3c7;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.8em;
-    font-weight: bold;
-}
-
-/* --- CALENDÁRIO & MODAL --- */
-/* Garante que o fundo escuro cubra TUDO */
-#modal-calendario {
-    display: none; 
-    position: fixed !important; /* Força a posição fixa */
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.85) !important;
-    z-index: 99999 !important; /* Camada máxima */
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch; /* Suaviza scroll no iPhone */
-}
-/* Garante que o conteúdo do calendário apareça */
-.modal-content {
-    background: #fff;
-    margin: 20px auto;
-    width: 95%;
-    max-width: 500px;
-    border-radius: 12px;
-    padding: 15px;
-    position: relative;
-    z-index: 100000 !important;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-}
-/* Ajuste para o FullCalendar não sumir no branco */
-#calendario-view {
-    max-width: 90%;      /* Não gruda nas bordas do modal */
-    margin: 0 auto;       /* Centraliza */
-    font-size: 0.85em;    /* Diminui a fonte geral (números e dias) */
-}
-
-.close {
-    position: absolute;
-    right: 25px;
-    top: 20px;
-    font-size: 30px;
-    cursor: pointer;
-}
-
-/* Ajuste para inputs de data no mobile */
-input[type="date"] {
-    appearance: none;
-    -webkit-appearance: none;
-    min-height: 45px; /* Altura boa para o toque do dedo */
-    background-color: #fff;
-    font-family: inherit;
-    font-size: 1rem;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    width: 100%; /* Garante que não "vaze" do card */
-    display: block;
-    position: relative;
-}
-
-/* Garante que o ícone do calendário não quebre o layout */
-input[type="date"]::-webkit-calendar-picker-indicator {
-    cursor: pointer;
-    padding: 5px;
-}
-#calendario-view {
-    height: 320px; /* Força uma altura fixa compacta */
-    overflow: hidden; /* Evita scrolls internos chatos */
-}
-
-/* CORES FORTES NO CALENDÁRIO */
-/* Ajusta o tamanho das células do FullCalendar para dedos */
-.fc-daygrid-day-number {
-    font-size: 1.1em;
-    padding: 8px !important;
-}
-
-/* Ajustar a altura das células para o calendário ficar mais "achatado" */
-.fc .fc-daygrid-day {
-    height: 45px !important; /* Altura menor para as células */
-}
-
-/* Diminuir o cabeçalho (Título e botões Próximo/Anterior) */
-.fc .fc-toolbar {
-    margin-bottom: 5px !important;
-    padding: 5px !important;
-}
-.fc .fc-toolbar-title {
-    font-size: 1.1em !important;
-}
-
-.fc-bg-event { 
-    opacity: 1 !important; 
-    background-color: var(--gray-neutral) !important; /* Cinza ocupado */
-}
-
-.fc-highlight {
-    background-color: #3498db !important; /* Azul seleção */
-    opacity: 0.8 !important;
-}
-.fc .fc-button {
-    padding: 4px 8px !important; /* Botões menores */
-    font-size: 0.8em !important;
-}
-
-.btn-solicitar {
-    width: 100%;
-    background: #25d366;
-    color: white;
-    border: none;
-    padding: 18px;
-    border-radius: 15px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 20px;
-}
-/* FORMATAÇÃO DO PERÍODO (INPUTS DE DATA) */
-.inputs-reserva {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 15px;
-    background: #f8f9fa; /* Fundo leve para destacar o grupo */
-    padding: 10px;
-    border-radius: 12px;
-}
-
-.inputs-reserva input[type="date"] {
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px; /* Cantos arredondados como o campo de nome */
-    font-family: 'Poppins', sans-serif;
-    color: #333;
-    background-color: white;
-    outline: none;
-    cursor: default; /* Como é readonly, removemos o ponteiro de texto */
-    width: 140px;
-    text-align: center;
-}
-
-.inputs-reserva span {
-    font-weight: 600;
-    color: #666;
-    font-size: 0.9rem;
-    text-transform: lowercase;
-}
-
-/* ANIMAÇÃO DE TROCA DE ABA */
-.content-section {
-    animation: fadeIn 0.4s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Substitua ou adicione estes estilos */
-.preco-venda {
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: var(--primary-blue); /* Vinho sofisticado [cite: 5] */
-    margin: 10px 0;
-}
-
-.descricao-curta {
-    font-size: 0.85rem;
-    color: #666;
-    height: 40px;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-}
-
-/* Ajuste o botão para parecer um botão de compra */
-.preco-btn {
-    background: #25d366 !important; /* Verde WhatsApp */
-    border: none;
-    cursor: pointer;
-    width: 100%;
-    transition: 0.2s;
-}
-
-.preco-btn:hover {
-    background: #128c7e !important;
-    transform: scale(1.02);
-}
-
-/* Botão do Carrinho Flutuante */
-#btn-carrinho-flutuante {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: var(--primary-blue); /* #7b001c */
-    color: white;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    z-index: 999;
-    cursor: pointer;
-}
-
-#contador-carrinho {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background: var(--success-green);
-    font-size: 0.8rem;
-    padding: 4px 8px;
-    border-radius: 50%;
-}
-
-/* Galeria no Modal */
-.galeria-container {
-    display: flex;
-    overflow-x: auto;
-    gap: 10px;
-    padding-bottom: 10px;
-    scroll-snap-type: x mandatory;
-}
-
-.img-galeria-modal {
-    width: 250px;
-    height: 300px;
-    object-fit: cover;
-    border-radius: 10px;
-    scroll-snap-align: start;
-}
-
-.seletor-tamanho {
-    margin: 20px 0;
-    text-align: left;
-}
-
-.input-padrao {
-    width: 100%;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    margin-top: 5px;
-}
-
-/* Melhoria no grid da vitrine */
-.vitrine-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 15px;
-    padding: 10px;
-}
-
-/* Tag de preço chamativa */
-.preco-tag {
-    color: #7b001c;
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin: 5px 0;
-}
-
-/* Estilo do item no carrinho */
-.item-carrinho-linha {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-}
-
-.total-carrinho-box {
-    padding: 15px;
-    font-size: 1.3rem;
-    text-align: right;
-    color: #7b001c;
-}
-
-.btn-confirmar-venda {
-    width: 100%;
-    padding: 15px;
-    background: #7b001c;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: bold;
-    font-size: 1.1rem;
-    margin-top: 15px;
-    cursor: pointer;
-}
-
-.input-estilizado {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-}
-
-/* De: #lista-brinquedos */
-#lista-itens {
+/* ==========================================================================
+   4. NAVEGAÇÃO POR ABAS (MENU PORTAL)
+   ========================================================================== */
+.portal-menu, .abas-navegacao {
     display: flex !important;
-    flex-wrap: wrap;
-    gap: 20px;
-    min-height: 200px;
-    background: white; /* Para você ver o container */
-}
-
-/* Container que segura os botões */
-.abas-navegacao {
-    display: flex !important; /* Força o comportamento flexível */
-    flex-direction: row !important; /* Garante que fiquem LADO A LADO */
-    justify-content: center !important; /* CENTRALIZA no meio da tela */
+    flex-direction: row !important;
+    justify-content: center !important;
     align-items: center;
-    gap: 10px; /* Espaçamento entre os botões */
+    gap: 10px;
     padding: 15px 10px;
     background-color: #ffffff;
     width: 100%;
     border-bottom: 1px solid #eee;
+    margin-bottom: 30px;
 }
 
-/* Estilo individual dos botões */
-.tab-btn {
-    flex: 0 1 auto; /* Impede que o botão ocupe a largura toda */
-    min-width: 130px; /* Largura mínima confortável */
+.tab-btn, .nav-btn {
+    flex: 0 1 auto;
+    min-width: 130px;
     padding: 10px 15px;
     border: none;
     border-radius: 25px;
@@ -642,89 +123,143 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     transition: all 0.3s ease;
 }
 
-/* Estado do botão clicado */
-.tab-btn.active {
-    background-color: #7b001c !important;
+.tab-btn.active, .nav-btn.active {
+    background-color: var(--primary-blue) !important;
     color: #ffffff !important;
     box-shadow: 0 4px 8px rgba(123, 0, 28, 0.2);
 }
 
-/* Isso garante que qualquer modal comece invisível */
-.modal {
-    display: none; /* ESCONDE POR PADRÃO */
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.6); /* Fundo escuro semi-transparente */
-    overflow: auto;
-}
-
-/* Garante que o conteúdo do modal esteja centralizado */
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border-radius: 15px;
-    width: 90%;
-    max-width: 500px;
-    position: relative;
-}
-
-/* Container da imagem dentro do modal */
-#conteudo-detalhes img, 
-#conteudo-detalhes .midia-detalhes {
-    width: 100%;            /* Ocupa a largura total do modal */
-    max-height: 350px;      /* Limita a altura para não expulsar os botões da tela */
-    object-fit: contain;    /* Mantém a proporção da foto sem cortar */
-    border-radius: 12px;    /* Deixa as bordas arredondadas */
-    background-color: #f9f9f9; 
-    margin-bottom: 15px;    /* Espaço para o texto abaixo */
-    display: block;
-}
-
-/* Ajuste para o conteúdo do modal respirar */
-.modal-content {
-    max-height: 90vh;       /* Não deixa o modal ser maior que a tela */
-    overflow-y: auto;       /* Se o texto for longo, cria barra de rolagem interna */
-}
-
-.controle-quantidade {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin: 20px 0;
-}
-
-.btn-qtd {
-    background: #eee;
-    border: none;
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    font-size: 1.2rem;
-    cursor: pointer;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.btn-qtd:hover {
-    background: #ddd;
-}
-
-#qtd-num {
-    font-size: 1.1rem;
-    font-weight: bold;
-    min-width: 20px;
+/* ==========================================================================
+   5. FILTROS E INFRAESTRUTURA DE GRIDS
+   ========================================================================== */
+.filtro-container {
+    padding: 15px;
     text-align: center;
+    background: #f8f9fa;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ddd;
 }
 
-/* Container da busca para centralizar e dar espaçamento */
-.card-consulta {
+#filtro-categoria {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    outline: none;
+}
+
+.grid-layout, .vitrine-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+    padding: 10px;
+}
+
+/* No mobile, diminui o tamanho mínimo do grid para caber dois em telas pequenas */
+@media (max-width: 480px) {
+    .grid-layout, .vitrine-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 15px;
+    }
+}
+
+/* ==========================================================================
+   6. CARDS DA VITRINE (PRODUTOS)
+   ========================================================================== */
+.card-item-cardapio {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-item-cardapio:hover { transform: translateY(-5px); }
+
+/* CORREÇÃO DO ALINHAMENTO DA IMAGEM: Altura idêntica em todas com corte central inteligente */
+.img-cardapio { 
+    width: 100%; 
+    height: 220px; 
+    object-fit: cover; 
+    object-position: center;
+    background: #fafafa;
+}
+
+.info-cardapio { 
+    padding: 20px; 
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.info-cardapio h3 { 
+    margin-bottom: 10px; 
+    color: var(--primary-blue); 
+}
+
+.tag-categoria-cliente {
+    background: #e3f2fd;
+    color: #1976d2;
+    font-size: 0.7rem;
+    font-weight: bold;
+    padding: 2px 8px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    display: inline-block;
+    width: fit-content;
+}
+
+.descricao-curta {
+    font-size: 0.85rem;
+    color: #666;
+    height: 40px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    margin-top: 5px;
+}
+
+.estoque-badge {
+    font-size: 0.85rem;
+    color: #555;
+    margin: 8px 0;
+}
+
+.preco-tag, .preco-venda {
+    color: var(--primary-blue);
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 8px 0;
+}
+
+/* Botão padrão estilo carrinho do WhatsApp */
+.preco-btn {
+    display: block;
+    margin-top: auto;
+    background: #25d366 !important;
+    color: white;
+    text-align: center;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    transition: 0.2s;
+}
+
+.preco-btn:hover {
+    background: #128c7e !important;
+    transform: scale(1.02);
+}
+
+/* ==========================================================================
+   7. SEÇÃO DE CONSULTA DE PEDIDOS (BUSCA)
+   ========================================================================== */
+.search-box, .card-consulta {
     background: white;
     padding: 30px;
     border-radius: 20px;
@@ -734,21 +269,19 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     text-align: center;
 }
 
-.card-consulta h3 {
-    color: #7b001c; /* Tom vinho da marca */
+.search-box h3, .card-consulta h3 {
+    color: var(--primary-blue);
     margin-bottom: 20px;
     font-weight: 600;
 }
 
-/* Container do Input e Botão */
-.busca-pedido {
-    display: flex;
+.input-group, .busca-pedido {
+    display: flex; 
     flex-direction: column;
     gap: 12px;
 }
 
-/* Estilização do Campo de Texto (WhatsApp) */
-#telefone-busca {
+#cliente-whatsapp-consulta, #telefone-busca {
     width: 100%;
     padding: 15px;
     border: 2px solid #f0f0f0;
@@ -760,16 +293,15 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     text-align: center;
 }
 
-#telefone-busca:focus {
-    border-color: #7b001c;
+#cliente-whatsapp-consulta:focus, #telefone-busca:focus {
+    border-color: var(--primary-blue);
     background-color: #fff;
     box-shadow: 0 0 8px rgba(123, 0, 28, 0.1);
 }
 
-/* Estilização do Botão de Consultar */
 .btn-buscar {
     width: 100%;
-    background-color: #7b001c; /* Vinho harmônico com a logo */
+    background-color: var(--primary-blue);
     color: white;
     border: none;
     padding: 15px;
@@ -793,3 +325,341 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     transform: scale(0.98);
 }
 
+/* Cards com respostas da busca */
+.card-pedido-cliente {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin-top: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    border-left: 5px solid var(--primary-blue);
+    text-align: left;
+}
+
+.pedido-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+/* Badges de Status do Pedido */
+.status-badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.status-pendente { background: #ffeaa7; color: #d6a01d; }
+.status-confirmado, .status-agendado { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+.status-finalizada { background-color: #ebedef; color: #7f8c8d; border: 1px solid #bdc3c7; }
+
+.barra-progresso {
+    background: #eee;
+    height: 8px;
+    border-radius: 10px;
+    margin-top: 15px;
+    overflow: hidden;
+}
+
+.progresso-preenchido {
+    height: 100%;
+    background: var(--success-green);
+    transition: width 0.5s ease;
+}
+
+/* ==========================================================================
+   8. INTERFACES MODAIS (CARRINHO E DETALHES DE ITENS)
+   ========================================================================== */
+.modal, #modal-calendario {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.6) !important;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 50px auto;
+    padding: 20px;
+    border-radius: 15px;
+    width: 92%;
+    max-width: 500px;
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.close {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 30px;
+    cursor: pointer;
+    color: #aaa;
+    z-index: 10;
+}
+.close:hover { color: #333; }
+
+/* Elementos de conteúdo interno do modal */
+#conteudo-detalhes img, 
+#conteudo-detalhes .midia-detalhes {
+    width: 100%;
+    max-height: 350px;
+    object-fit: contain;
+    border-radius: 12px;
+    background-color: #f9f9f9; 
+    margin-bottom: 15px;
+    display: block;
+}
+
+.galeria-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    padding-bottom: 10px;
+    scroll-snap-type: x mandatory;
+}
+
+.img-galeria-modal {
+    width: 250px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 10px;
+    scroll-snap-align: start;
+}
+
+/* Seletores e inputs internos */
+.seletor-tamanho { margin: 20px 0; text-align: left; }
+.input-padrao, .input-estilizado {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    margin-top: 5px;
+    outline: none;
+}
+
+/* Controle de Quantidade */
+.controle-quantidade {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.btn-qtd {
+    background: #eee;
+    border: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.btn-qtd:hover { background: #ddd; }
+
+#qtd-num {
+    font-size: 1.1rem;
+    font-weight: bold;
+    min-width: 20px;
+    text-align: center;
+}
+
+/* ==========================================================================
+   9. ELEMENTOS DO CARRINHO FLUTUANTE
+   ========================================================================== */
+#btn-carrinho-flutuante {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--primary-blue);
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    z-index: 999;
+    cursor: pointer;
+}
+
+#contador-carrinho {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: var(--success-green);
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    border-radius: 50%;
+}
+
+.item-carrinho-linha {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.total-carrinho-box {
+    padding: 15px;
+    font-size: 1.3rem;
+    text-align: right;
+    color: var(--primary-blue);
+    font-weight: bold;
+}
+
+.btn-confirmar-venda {
+    width: 100%;
+    padding: 15px;
+    background: var(--primary-blue);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-top: 15px;
+    cursor: pointer;
+}
+
+/* ==========================================================================
+   10. INTEGRAÇÃO FULLCALENDAR (AGENDAMENTO)
+   ========================================================================== */
+#calendario-view {
+    height: 320px;
+    max-width: 90%;
+    margin: 0 auto;
+    font-size: 0.85em;
+    overflow: hidden;
+}
+
+input[type="date"] {
+    appearance: none;
+    -webkit-appearance: none;
+    min-height: 45px;
+    background-color: #fff;
+    font-family: inherit;
+    font-size: 1rem;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 100%;
+    display: block;
+    position: relative;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    padding: 5px;
+}
+
+.fc-daygrid-day-number {
+    font-size: 1.1em;
+    padding: 8px !important;
+}
+
+.fc .fc-daygrid-day {
+    height: 45px !important;
+}
+
+.fc .fc-toolbar {
+    margin-bottom: 5px !important;
+    padding: 5px !important;
+}
+
+.fc .fc-toolbar-title {
+    font-size: 1.1em !important;
+}
+
+.fc-bg-event { 
+    opacity: 1 !important; 
+    background-color: var(--gray-neutral) !important;
+}
+
+.fc-highlight {
+    background-color: #3498db !important;
+    opacity: 0.8 !important;
+}
+
+.fc .fc-button {
+    padding: 4px 8px !important;
+    font-size: 0.8em !important;
+}
+
+.btn-solicitar {
+    width: 100%;
+    background: #25d366;
+    color: white;
+    border: none;
+    padding: 18px;
+    border-radius: 15px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.inputs-reserva {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 12px;
+}
+
+.inputs-reserva input[type="date"] {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    color: #333;
+    background-color: white;
+    outline: none;
+    width: 140px;
+    text-align: center;
+}
+
+.inputs-reserva span {
+    font-weight: 600;
+    color: #666;
+    font-size: 0.9rem;
+    text-transform: lowercase;
+}
+
+/* ==========================================================================
+   11. COMPLEMENTOS & ANIMAÇÕES
+   ========================================================================== */
+.content-section {
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.aviso { 
+    grid-column: 1/-1; 
+    text-align: center; 
+    padding: 40px; 
+    color: #999; 
+    font-style: italic; 
+}
