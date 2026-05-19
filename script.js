@@ -36,15 +36,20 @@ function alternarSecao(secaoAlvo) {
     }
 }
 
+// VARIÁVEL GLOBAL COMPLEMENTAR PARA O FILTRO ATIVO
+let filtroCategoriaAtual = "todos";
+
+// Substitua essas duas funções no seu script.js
+
 async function carregarCardapio() {
     const lista = document.getElementById('lista-itens'); 
-    const filtro = document.getElementById('filtro-nicho').value; // Captura o nicho selecionado
     
     if (!lista) {
         console.error("Erro: Não encontrei o elemento 'lista-itens' no HTML");
         return;
     }
     
+    // Busca os dados uma única vez ao carregar a página
     const snapshot = await database.ref('produtos').once('value');
     const produtos = snapshot.val();
     
@@ -54,19 +59,15 @@ async function carregarCardapio() {
     Object.keys(produtos).forEach(id => {
         const p = produtos[id];
         
-        // --- LÓGICA DE FILTRO ---
-        // 1. Ignora produtos inativos
+        // Mantém apenas a regra de ignorar inativos na renderização inicial
         if (p.status !== "ativo") return;
-        
-        // 2. Filtra por nicho (se o filtro não for 'todos' e o nicho do produto for diferente do selecionado)
-        // Nota: Garanta que no seu Firebase o campo se chame 'categoria' ou 'nicho'
-        if (filtro !== "todos" && p.categoria !== filtro) return;
 
         const precoProduto = p.valor || p.preco || 0;
         const fotoPrincipal = p.imagem ? p.imagem.split(',')[0] : 'https://via.placeholder.com/300';
         
+        // Inserimos a categoria direto no atributo do HTML (data-categoria) para filtrar no cliente
         lista.innerHTML += `
-            <div class="card-item-cardapio" onclick="abrirDetalhesProduto('${id}')">
+            <div class="card-item-cardapio" data-categoria="${p.categoria || 'Geral'}" onclick="abrirDetalhesProduto('${id}')">
                 <img src="${fotoPrincipal}" class="img-cardapio">
                 <div class="info-cardapio">
                     <span class="tag-categoria-cliente">${p.categoria || 'Geral'}</span>
@@ -76,6 +77,30 @@ async function carregarCardapio() {
                 </div>
             </div>
         `;
+    });
+}
+
+function filtrarCategoria(event, categoriaSelecionada) {
+    // 1. Atualiza visualmente o estado dos botões de pílula
+    const botoes = document.querySelectorAll('.btn-filtro');
+    botoes.forEach(btn => btn.classList.remove('active'));
+
+    if (event) {
+        event.currentTarget.classList.add('active');
+    }
+
+    // 2. Filtro instantâneo no Front-End através dos elementos renderizados
+    const cards = document.querySelectorAll('.card-item-cardapio');
+    
+    cards.forEach(card => {
+        // Pega a categoria injetada diretamente no atributo customizado do card
+        const categoriaCard = card.getAttribute('data-categoria');
+
+        if (categoriaSelecionada === 'todos' || categoriaCard.toLowerCase().trim() === categoriaSelecionada.toLowerCase().trim()) {
+            card.style.display = "flex"; // Mostra o card instantaneamente
+        } else {
+            card.style.display = "none"; // Oculta o card sem recarregar a tela
+        }
     });
 }
 
