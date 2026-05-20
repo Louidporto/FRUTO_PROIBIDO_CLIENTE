@@ -162,8 +162,37 @@ async function abrirDetalhesProduto(id) {
     const conteudo = document.getElementById('conteudo-detalhes');
     const precoProduto = p.valor || p.preco || 0;
 
+    // --- LOGICA DO CARROSSEL DE IMAGENS ---
+    // Separa as imagens por vírgula. Se não houver nenhuma, usa o placeholder
+    const listaImagens = p.imagem ? p.imagem.split(',').map(img => img.trim()) : ['https://via.placeholder.com/300'];
+    
+    // Gera o HTML de cada imagem dentro do container do slider
+    const imagensHtml = listaImagens.map((imgUrl, index) => `
+        <img src="${imgUrl}" class="slide-foto ${index === 0 ? 'active' : ''}" data-index="${index}">
+    `).join('');
+
+    // Se tiver mais de uma imagem, exibe as setas de navegação e os pontinhos (dots)
+    let controlesCarrosselHtml = "";
+    if (listaImagens.length > 1) {
+        const pontinhosHtml = listaImagens.map((_, index) => `
+            <span class="dot ${index === 0 ? 'active' : ''}" onclick="mudarSlideDinamico(${index})"></span>
+        `).join('');
+
+        controlesCarrosselHtml = `
+            <button class="seta-carrossel seta-esquerda" onclick="navegarSlide(-1)">&#10094;</button>
+            <button class="seta-carrossel seta-direita" onclick="navegarSlide(1)">&#10095;</button>
+            <div class="container-dots">${pontinhosHtml}</div>
+        `;
+    }
+    // --------------------------------------
+
     conteudo.innerHTML = `
-        <img src="${p.imagem ? p.imagem.split(',')[0] : 'https://via.placeholder.com/300'}" class="midia-detalhes" style="width: 100%; max-height: 350px; object-fit: contain; border-radius: 12px;">
+        <div class="carrossel-container">
+            <div class="slider-wrapper">
+                ${imagensHtml}
+            </div>
+            ${controlesCarrosselHtml}
+        </div>
         
         <h2>${p.nome}</h2>
         <p class="preco-tag">R$ ${parseFloat(precoProduto).toFixed(2).replace('.',',')}</p>
@@ -194,6 +223,42 @@ async function abrirDetalhesProduto(id) {
 
     exibirDetalhesNoModal(produtoSelecionado);
     modal.style.display = "block";
+}
+
+let slideIndexAtual = 0;
+
+function navegarSlide(direcao) {
+    const slides = document.querySelectorAll('.slide-foto');
+    const dots = document.querySelectorAll('.dot');
+    if (slides.length === 0) return;
+
+    // Remove a classe ativa do slide atual
+    slides[slideIndexAtual].classList.remove('active');
+    if (dots.length > 0) dots[slideIndexAtual].classList.remove('active');
+
+    // Calcula o próximo index
+    slideIndexAtual += direcao;
+
+    // Se passar do fim, volta para o início. Se for menor que zero, vai para o fim.
+    if (slideIndexAtual >= slides.length) slideIndexAtual = 0;
+    if (slideIndexAtual < 0) slideIndexAtual = slides.length - 1;
+
+    // Adiciona a classe ativa no novo slide
+    slides[slideIndexAtual].classList.add('active');
+    if (dots.length > 0) dots[slideIndexAtual].classList.add('active');
+}
+
+function mudarSlideDinamico(index) {
+    const slides = document.querySelectorAll('.slide-foto');
+    const dots = document.querySelectorAll('.dot');
+    
+    slides[slideIndexAtual].classList.remove('active');
+    if (dots.length > 0) dots[slideIndexAtual].classList.remove('active');
+
+    slideIndexAtual = index;
+
+    slides[slideIndexAtual].classList.add('active');
+    if (dots.length > 0) dots[slideIndexAtual].classList.add('active');
 }
 
 function exibirDetalhesNoModal(produto) {
