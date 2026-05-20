@@ -256,7 +256,7 @@ html {
     flex-direction: column;
 }
 
-.info-cardapio h3 { 
+.nome-produto{ 
     margin-bottom: 10px; 
     color: var(--primary-blue); 
 }
@@ -275,7 +275,7 @@ html {
 
 .descricao-curta {
     font-size: 0.85rem;
-    color: #666;
+    color: black;
     height: 40px;
     overflow: hidden;
     display: -webkit-box;
