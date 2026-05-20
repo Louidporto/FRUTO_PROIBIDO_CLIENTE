@@ -1,7 +1,16 @@
-// --- VARIÁVEIS GLOBAIS ---
+// ==========================================================================
+// 1. VARIÁVEIS GLOBAIS
+// ==========================================================================
 let carrinho = [];
 let produtoSelecionado = null;
+let tamanhoSelecionado = "";
+let corSelecionada = "";
+let filtroCategoriaAtual = "todos";
+let filtroTamanhoAtual = "todos";   
 
+// ==========================================================================
+// 2. INICIALIZAÇÃO E CONTROLE DE SEÇÕES (ABAS)
+// ==========================================================================
 window.onload = function() {
     console.log("Portal iniciado...");
     
@@ -36,74 +45,110 @@ function alternarSecao(secaoAlvo) {
     }
 }
 
-// VARIÁVEL GLOBAL COMPLEMENTAR PARA O FILTRO ATIVO
-let filtroCategoriaAtual = "todos";
-
-// Substitua essas duas funções no seu script.js
-
+// ==========================================================================
+// 3. VITRINE DE PRODUTOS E FILTROS
+// ==========================================================================
 async function carregarCardapio() {
-    const lista = document.getElementById('lista-itens'); 
-    
-    if (!lista) {
-        console.error("Erro: Não encontrei o elemento 'lista-itens' no HTML");
-        return;
-    }
-    
-    // Busca os dados uma única vez ao carregar a página
-    const snapshot = await database.ref('produtos').once('value');
-    const produtos = snapshot.val();
-    
-    if (!produtos) return;
-    lista.innerHTML = "";
-
-    Object.keys(produtos).forEach(id => {
-        const p = produtos[id];
-        
-        // Mantém apenas a regra de ignorar inativos na renderização inicial
-        if (p.status !== "ativo") return;
-
-        const precoProduto = p.valor || p.preco || 0;
-        const fotoPrincipal = p.imagem ? p.imagem.split(',')[0] : 'https://via.placeholder.com/300';
-        
-        // Inserimos a categoria direto no atributo do HTML (data-categoria) para filtrar no cliente
-        lista.innerHTML += `
-            <div class="card-item-cardapio" data-categoria="${p.categoria || 'Geral'}" onclick="abrirDetalhesProduto('${id}')">
-                <img src="${fotoPrincipal}" class="img-cardapio">
-                <div class="info-cardapio">
-                    <span class="tag-categoria-cliente">${p.categoria || 'Geral'}</span>
-                    <h3>${p.nome}</h3>
-                    <p class="preco-tag">R$ ${parseFloat(precoProduto).toFixed(2).replace('.',',')}</p>
-                    <button class="preco-btn"><i class="fas fa-cart-plus"></i> Ver Opções</button>
-                </div>
-            </div>
-        `;
-    });
+    // Apenas aciona a função centralizada que busca e filtra os itens em tempo real
+    aplicarFiltrosCruzados();
 }
 
-function filtrarCategoria(event, categoriaSelecionada) {
-    // 1. Atualiza visualmente o estado dos botões de pílula
+// Função ajustada para receber o evento e a categoria de forma correta
+function filtrarCategoria(event, categoria) {
+    filtroCategoriaAtual = categoria;
+
+    // Atualiza a classe ativa nos botões de categoria
     const botoes = document.querySelectorAll('.btn-filtro');
     botoes.forEach(btn => btn.classList.remove('active'));
-
-    if (event) {
+    
+    if (event && event.currentTarget) {
         event.currentTarget.classList.add('active');
     }
 
-    // 2. Filtro instantâneo no Front-End através dos elementos renderizados
-    const cards = document.querySelectorAll('.card-item-cardapio');
-    
-    cards.forEach(card => {
-        // Pega a categoria injetada diretamente no atributo customizado do card
-        const categoriaCard = card.getAttribute('data-categoria');
+    aplicarFiltrosCruzados();
+}
 
-        if (categoriaSelecionada === 'todos' || categoriaCard.toLowerCase().trim() === categoriaSelecionada.toLowerCase().trim()) {
-            card.style.display = "flex"; // Mostra o card instantaneamente
-        } else {
-            card.style.display = "none"; // Oculta o card sem recarregar a tela
+// Função para gerenciar o clique no filtro de tamanho
+function filtrarPorTamanho(tamanho, botao) {
+    filtroTamanhoAtual = tamanho;
+
+    // Atualiza a classe ativa nos botões de tamanho
+    const botoesTamanho = document.querySelectorAll('.btn-filtro-tam');
+    botoesTamanho.forEach(btn => btn.classList.remove('active'));
+    if (botao) botao.classList.add('active');
+
+    aplicarFiltrosCruzados();
+}
+
+// Função centralizada que lê o Firebase e aplica os filtros no ID correto ('lista-itens')
+function aplicarFiltrosCruzados() {
+    const vitrine = document.getElementById('lista-itens'); 
+    if (!vitrine) {
+        console.error("Erro: Elemento 'lista-itens' não foi encontrado.");
+        return;
+    }
+
+    database.ref('produtos').once('value', (snapshot) => {
+        const produtos = snapshot.val();
+        vitrine.innerHTML = "";
+        
+        let produtosExibidos = 0;
+
+        if (produtos) {
+            Object.keys(produtos).forEach(id => {
+                const p = produtos[id];
+                
+                // 1. Ignora produtos nulos ou inativos
+                if (!p || p.status !== "ativo") return;
+                
+                // 2. Validação da Categoria
+                const bateCategoria = (filtroCategoriaAtual === 'todos' || p.categoria === filtroCategoriaAtual);
+                
+                // 3. Validação do Tamanho com proteção contra dados corrompidos
+                let bateTamanho = false;
+                if (filtroTamanhoAtual === 'todos') {
+                    bateTamanho = true;
+                } else if (p.tamanhos) {
+                    try {
+                        const stringTamanhos = String(p.tamanhos);
+                        const listaTamanhos = stringTamanhos.split(',').map(t => t.trim().toUpperCase());
+                        bateTamanho = listaTamanhos.includes(filtroTamanhoAtual.toUpperCase());
+                    } catch (err) {
+                        console.error("Erro ao ler tamanhos do produto ID " + id, err);
+                        bateTamanho = false;
+                    }
+                }
+
+                // Se passar nos filtros, renderiza o card
+                if (bateCategoria && bateTamanho) {
+                    const precoProduto = p.valor || p.preco || 0;
+                    const fotoPrincipal = p.imagem ? p.imagem.split(',')[0] : 'https://via.placeholder.com/300';
+
+                    vitrine.innerHTML += `
+                        <div class="card-item-cardapio" data-categoria="${p.categoria || 'Geral'}" onclick="abrirDetalhesProduto('${id}')">
+                            <img src="${fotoPrincipal}" class="img-cardapio">
+                            <div class="info-cardapio">
+                                <span class="tag-categoria-cliente">${p.categoria || 'Geral'}</span>
+                                <h3>${p.nome || 'Produto sem nome'}</h3>
+                                <p class="preco-tag">R$ ${parseFloat(precoProduto).toFixed(2).replace('.',',')}</p>
+                                <button class="preco-btn"><i class="fas fa-cart-plus"></i> Ver Opções</button>
+                            </div>
+                        </div>
+                    `;
+                    produtosExibidos++;
+                }
+            });
+        }
+
+        if (produtosExibidos === 0) {
+            vitrine.innerHTML = "<p class='aviso'>Nenhum produto encontrado para os filtros selecionados.</p>";
         }
     });
 }
 
+// ==========================================================================
+// 4. DETALHES DO PRODUTO E SELEÇÃO DE VARIAÇÕES
+// ==========================================================================
 async function abrirDetalhesProduto(id) {
     const snapshot = await database.ref('produtos/' + id).once('value');
     const p = snapshot.val();
@@ -114,7 +159,6 @@ async function abrirDetalhesProduto(id) {
 
     const modal = document.getElementById('modal-detalhes');
     const conteudo = document.getElementById('conteudo-detalhes');
-    
     const precoProduto = p.valor || p.preco || 0;
 
     conteudo.innerHTML = `
@@ -130,15 +174,16 @@ async function abrirDetalhesProduto(id) {
             <button class="btn-qtd" onclick="alterarQtd(1)" type="button">+</button>
         </div>
 
-        <div class="seletor-tamanho">
-            <label>Selecione o Tamanho:</label>
-            <select id="escolha-tamanho" class="input-padrao">
-                <option value="Único">Tamanho Único</option>
-                <option value="P">P</option>
-                <option value="M">M</option>
-                <option value="G">G</option>
-                <option value="GG">GG</option>
-            </select>
+        <div class="secao-variacoes">
+            <div class="variacao-grupo">
+                <label>Escolha o Tamanho:</label>
+                <div id="container-tamanhos-cliente" class="opcoes-flex"></div>
+            </div>
+
+            <div class="variacao-grupo" style="margin-top: 15px;">
+                <label>Escolha a Cor:</label>
+                <div id="container-cores-cliente" class="opcoes-flex"></div>
+            </div>
         </div>
 
         <button onclick="confirmarAdicao()" class="btn-solicitar" style="margin-top: 20px; width: 100%;">
@@ -146,7 +191,69 @@ async function abrirDetalhesProduto(id) {
         </button>
     `;
 
+    exibirDetalhesNoModal(produtoSelecionado);
     modal.style.display = "block";
+}
+
+function exibirDetalhesNoModal(produto) {
+    tamanhoSelecionado = "";
+    corSelecionada = "";
+
+    const containerTamanhos = document.getElementById('container-tamanhos-cliente');
+    if (containerTamanhos) {
+        containerTamanhos.innerHTML = "";
+        if (produto.tamanhos && String(produto.tamanhos).trim() !== "") {
+            String(produto.tamanhos).split(',').forEach(tam => {
+                const t = tam.trim();
+                containerTamanhos.innerHTML += `
+                    <button class="pilula-opcao" onclick="selecionarTamanho(this, '${t}')">${t}</button>
+                `;
+            });
+        } else {
+            containerTamanhos.innerHTML = `<span style="color:#777">Tamanho Único (U)</span>`;
+            tamanhoSelecionado = "U";
+        }
+    }
+
+    const containerCores = document.getElementById('container-cores-cliente');
+    if (containerCores) {
+        containerCores.innerHTML = "";
+        if (produto.cores && String(produto.cores).trim() !== "") {
+            String(produto.cores).split(',').forEach(cor => {
+                const c = cor.trim();
+                const corEstilo = traduzirCorParaCss(c); 
+                containerCores.innerHTML += `
+                    <button class="bola-cor" style="background-color: ${corEstilo};" title="${c}" onclick="selecionarCor(this, '${c}')"></button>
+                `;
+            });
+        } else {
+            containerCores.innerHTML = `<span style="color:#777">Cor Única</span>`;
+            corSelecionada = "Única";
+        }
+    }
+}
+
+function selecionarTamanho(elemento, valor) {
+    document.querySelectorAll('.pilula-opcao').forEach(el => el.classList.remove('active'));
+    elemento.classList.add('active');
+    tamanhoSelecionado = valor;
+}
+
+function selecionarCor(elemento, valor) {
+    document.querySelectorAll('.bola-cor').forEach(el => el.classList.remove('active'));
+    elemento.classList.add('active');
+    corSelecionada = valor;
+}
+
+// CORREÇÃO: Função fechada corretamente e a retornar o valor padrão caso não encontre correspondência
+function traduzirCorParaCss(cor) {
+    const coresTraduzidas = {
+        'preto': '#000000', 'branco': '#ffffff', 'vermelho': '#e74c3c', 
+        'azul': '#3498db', 'rosa': '#ffc0cb', 'pink': '#ff69b4', 
+        'vinho': '#7b001c', 'bege': '#f5f5dc', 'amarelo': '#f1c40f'
+    };
+    const c = cor.toLowerCase().trim();
+    return coresTraduzidas[c] || cor;
 }
 
 function alterarQtd(valor) {
@@ -159,30 +266,43 @@ function alterarQtd(valor) {
     }
 }
 
-// Função de adição unificada e corrigida
+// ==========================================================================
+// 5. GERENCIAMENTO DO CARRINHO DE COMPRAS
+// ==========================================================================
 function confirmarAdicao() {
     if (!produtoSelecionado) return;
 
-    const qtd = parseInt(document.getElementById('qtd-num').innerText);
-    const tamanho = document.getElementById('escolha-tamanho').value;
-    const precoProduto = produtoSelecionado.valor || produtoSelecionado.preco || 0;
-    
-    const item = {
+    const qtd = parseInt(document.getElementById('qtd-num').innerText) || 1;
+
+    if (produtoSelecionado.tamanhos && String(produtoSelecionado.tamanhos).trim() !== "" && !tamanhoSelecionado) {
+        alert("Por favor, selecione um tamanho antes de adicionar ao carrinho!");
+        return;
+    }
+    if (produtoSelecionado.cores && String(produtoSelecionado.cores).trim() !== "" && !corSelecionada) {
+        alert("Por favor, selecione uma cor antes de adicionar ao carrinho!");
+        return;
+    }
+
+    const tamFinal = tamanhoSelecionado || "U";
+    const corFinal = corSelecionada || "Única";
+
+    const itemCarrinho = {
         id: produtoSelecionado.id,
         nome: produtoSelecionado.nome,
-        preco: parseFloat(precoProduto), 
-        tamanho: tamanho,
+        preco: produtoSelecionado.valor || produtoSelecionado.preco || 0,
+        imagem: produtoSelecionado.imagem ? produtoSelecionado.imagem.split(',')[0] : 'https://via.placeholder.com/300',
         quantidade: qtd,
-        imagem: produtoSelecionado.imagem ? produtoSelecionado.imagem.split(',')[0] : 'https://via.placeholder.com/300'
+        tamanho: tamFinal,
+        cor: corFinal
     };
 
-    carrinho.push(item);
+    carrinho.push(itemCarrinho);
     localStorage.setItem('carrinho_fp', JSON.stringify(carrinho));
     
     fecharModal('modal-detalhes');
     atualizarContadorCarrinho();
     
-    alert(`${qtd}x ${item.nome} (Tam: ${tamanho}) adicionado ao carrinho!`);
+    alert(`${qtd}x ${itemCarrinho.nome} (Tam: ${tamFinal} | Cor: ${corFinal}) adicionado ao carrinho!`);
 }
 
 function atualizarContadorCarrinho() {
@@ -192,7 +312,6 @@ function atualizarContadorCarrinho() {
     const btn = document.getElementById('btn-carrinho-flutuante');
     const contador = document.getElementById('contador-carrinho');
     
-    // Contabiliza o total de itens (somando as quantidades)
     const totalItens = carrinho.reduce((acc, item) => acc + item.quantidade, 0);
     
     if (totalItens > 0) {
@@ -209,7 +328,7 @@ function abrirCarrinho() {
     const totalHtml = document.getElementById('total-carrinho');
     
     if (carrinho.length === 0) {
-        listaHtml.innerHTML = "<p>Seu carrinho está vazio.</p>";
+        listaHtml.innerHTML = "<p style='text-align: center; padding: 20px; color: #666;'>Seu carrinho está vazio.</p>";
         totalHtml.innerText = "";
     } else {
         let total = 0;
@@ -217,15 +336,25 @@ function abrirCarrinho() {
             const subtotalItem = item.preco * item.quantidade;
             total += subtotalItem;
             
-            return `
-                <div class="item-carrinho-linha" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-                    <img src="${item.imagem}" width="40" style="border-radius: 5px;">
-                    <div style="flex: 1; margin-left: 10px;">
-                        <strong>${item.nome}</strong><br>
-                        <small>Qtd: ${item.quantidade} | Tam: ${item.tamanho}</small>
+            return `            
+                <div class="item-carrinho-linha">
+                    <img src="${item.imagem}" class="img-carrinho-thumb" style="width: 45px; height: 45px; object-fit: cover; border-radius: 8px; flex-shrink: 0;">
+                    
+                    <div class="detalhes-item-carrinho" style="flex: 1; min-width: 0; padding: 0 5px;">
+                        <h4 style="margin: 0; font-size: 0.85rem; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            ${item.nome}
+                        </h4>
+                        <small style="color: #777; display: block; margin: 1px 0; font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            Tam: <strong>${item.tamanho}</strong> | Cor: <strong>${item.cor}</strong>
+                        </small>
+                        <p style="margin: 0; font-weight: 600; color: var(--primary-blue); font-size: 0.85rem;">
+                            R$ ${parseFloat(item.preco).toFixed(2).replace('.', ',')} <span style="font-weight: normal; color: #888; font-size: 0.75rem;">x ${item.quantidade}</span>
+                        </p>
                     </div>
-                    <span style="margin-right: 10px;">R$ ${subtotalItem.toFixed(2).replace('.',',')}</span>
-                    <button onclick="removerDoCarrinho(${index})" style="background: none; border: none; color: red; cursor: pointer;"><i class="fas fa-trash"></i></button>
+                    
+                    <div class="acoes-item-carrinho" style="flex-shrink: 0; width: 30px; text-align: right;">
+                        <i class="fas fa-trash-alt" style="color: var(--danger-red); cursor: pointer; font-size: 0.95rem; padding: 5px;" onclick="removerDoCarrinho(${index})"></i>
+                    </div>
                 </div>
             `;
         }).join('');
@@ -246,12 +375,13 @@ function fecharModal(id) {
     if (modal) modal.style.display = "none";
 }
 
+// ==========================================================================
+// 6. FINALIZAÇÃO DE COMPRA E ENVIO PARA O WHATSAPP
+// ==========================================================================
 async function finalizarCompraFluxoCompleto() {
-    // Captura os valores dos inputs
     const nomeCliente = document.getElementById('nome-cliente-finalizar').value.trim();
     const whatsapp = document.getElementById('whatsapp-cliente-finalizar').value.replace(/\D/g, '');
     
-    // 1. Validações simples
     if (nomeCliente.length < 3) {
         alert("Por favor, insira seu nome para identificarmos o pedido!");
         return;
@@ -267,7 +397,6 @@ async function finalizarCompraFluxoCompleto() {
     let total = 0;
     carrinho.forEach(item => total += (item.preco * item.quantidade));
 
-    // 2. Criar objeto do pedido incluindo o NOME do cliente
     const novoPedido = {
         cliente_nome: nomeCliente,
         cliente_whatsapp: whatsapp,
@@ -278,19 +407,14 @@ async function finalizarCompraFluxoCompleto() {
     };
 
     try {
-        // 3. Salva no Firebase na pasta 'pedidos'
         await database.ref('pedidos').push(novoPedido);
+        enviarMensagemWhatsApp(nomeCliente, whatsapp, total, carrinho);
 
-        // 4. Prepara e envia a mensagem para o WhatsApp do vendedor (Passando o nome agora)
-        enviarMensagemWhatsApp(nomeCliente, whatsapp, total);
-
-        // 5. Limpa tudo
         carrinho = [];
         localStorage.removeItem('carrinho_fp');
         atualizarContadorCarrinho();
         fecharModal('modal-carrinho');
 
-        // Limpa os campos do modal
         document.getElementById('nome-cliente-finalizar').value = "";
         document.getElementById('whatsapp-cliente-finalizar').value = "";
 
@@ -300,16 +424,15 @@ async function finalizarCompraFluxoCompleto() {
     }
 }
 
-// Função auxiliar para montar a mensagem (Atualizada com Nome)
-function enviarMensagemWhatsApp(nomeCliente, whatsappCliente, total) {
+function enviarMensagemWhatsApp(nomeCliente, whatsappCliente, total, itensEnviados) {
     let mensagem = `*NOVO PEDIDO - FRUTO PROIBIDO*\n\n`;
     mensagem += `👤 *Cliente:* ${nomeCliente}\n`;
     mensagem += `📱 *WhatsApp:* ${whatsappCliente}\n`;
     mensagem += `--------------------------\n`;
 
-    carrinho.forEach((item, i) => {
+    itensEnviados.forEach((item, i) => {
         const subtotalItem = item.preco * item.quantidade;
-        mensagem += `${i+1}. *${item.quantidade}x ${item.nome}* (Tam: ${item.tamanho}) - R$ ${subtotalItem.toFixed(2)}\n`;
+        mensagem += `${i+1}. *${item.quantidade}x ${item.nome}*\n   - Tam: ${item.tamanho} | Cor: ${item.cor}\n   - Valor: R$ ${subtotalItem.toFixed(2).replace('.', ',')}\n\n`;
     });
 
     mensagem += `--------------------------\n`;
@@ -321,6 +444,9 @@ function enviarMensagemWhatsApp(nomeCliente, whatsappCliente, total) {
     window.open(url, '_blank');
 }
 
+// ==========================================================================
+// 7. CONSULTA HISTÓRICO DE PEDIDOS DO CLIENTE
+// ==========================================================================
 async function consultarPedidosCliente() {
     const whatsappBusca = document.getElementById('telefone-busca').value.replace(/\D/g, '');
     const listaHistorico = document.getElementById('historico-pedidos');
@@ -333,7 +459,6 @@ async function consultarPedidosCliente() {
     listaHistorico.innerHTML = "<p style='text-align:center;'>Buscando seus pedidos...</p>";
 
     try {
-        // Busca na coleção 'pedidos' filtrando pelo WhatsApp do cliente
         const snapshot = await database.ref('pedidos')
             .orderByChild('cliente_whatsapp')
             .equalTo(whatsappBusca)
@@ -350,16 +475,14 @@ async function consultarPedidosCliente() {
             return;
         }
 
-        listaHistorico.innerHTML = ""; // Limpa o "Buscando..."
+        listaHistorico.innerHTML = ""; 
 
-        // Transforma o objeto em array e inverte para mostrar o mais recente primeiro
         const listaOrdenada = Object.keys(pedidos).reverse();
 
         listaOrdenada.forEach(id => {
             const pedido = pedidos[id];
             const dataFormatada = new Date(pedido.data).toLocaleDateString('pt-BR');
             
-            // Cria o HTML de cada pedido encontrado
             listaHistorico.innerHTML += `
                 <div class="card-pedido-cliente">
                     <div class="pedido-header">
@@ -372,7 +495,7 @@ async function consultarPedidosCliente() {
                         <p><i class="far fa-calendar-alt"></i> Data: ${dataFormatada}</p>
                         <p><i class="fas fa-coins"></i> Total: <strong>R$ ${pedido.valor_total.toFixed(2).replace('.', ',')}</strong></p>
                         <hr style="margin: 10px 0; border: 0; border-top: 1px solid #eee;">
-                        <small>Itens: ${pedido.itens.map(i => i.nome).join(', ')}</small>
+                        <small>Itens: ${pedido.itens.map(i => `${i.nome} (${i.tamanho}/${i.cor})`).join(', ')}</small>
                     </div>
                     <div class="barra-progresso">
                         <div class="progresso-preenchido" style="width: ${pedido.status === 'pendente' ? '30%' : '100%'}"></div>
