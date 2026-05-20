@@ -130,6 +130,7 @@ function aplicarFiltrosCruzados() {
                             <div class="info-cardapio">
                                 <span class="tag-categoria-cliente">${p.categoria || 'Geral'}</span>
                                 <h3>${p.nome || 'Produto sem nome'}</h3>
+                                <h3>${p.descricao || 'Produto sem descriçao'}</h3>
                                 <p class="preco-tag">R$ ${parseFloat(precoProduto).toFixed(2).replace('.',',')}</p>
                                 <button class="preco-btn"><i class="fas fa-cart-plus"></i> Ver Opções</button>
                             </div>
