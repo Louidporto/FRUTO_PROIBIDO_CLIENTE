@@ -53,17 +53,33 @@
 
 <main class="container">
     <section id="secao-catalogo" style="display: block;"> 
-      <div class="filtro-container">
+        <div class="filtro-container">
             <div class="botoes-filtro-track">
-                <button class="btn-filtro active" onclick="filtrarCategoria(event, 'todos')"> Todos</button>
-                <button class="btn-filtro" onclick="filtrarCategoria(event, 'Promoçoes')"> Promoçoes</button>
-                <button class="btn-filtro" onclick="filtrarCategoria(event, 'Calcinhas')"> Calcinhas</button>
-                <button class="btn-filtro" onclick="filtrarCategoria(event, 'Conjuntos')"> Conjuntos</button>                
-                <button class="btn-filtro" onclick="filtrarCategoria(event, 'Sex-shop')"> Sex-shop</button>
-                <button class="btn-filtro" onclick="filtrarCategoria(event, 'Infantil')"> Infantil</button>
-               
+                <button class="btn-filtro active" onclick="filtrarCategoria(event, 'todos')">Todos</button>
+                <button class="btn-filtro" onclick="filtrarCategoria(event, 'Promoçoes')">Promoções</button>
+                <button class="btn-filtro" onclick="filtrarCategoria(event, 'Calcinhas')">Calcinhas</button>
+                <button class="btn-filtro" onclick="filtrarCategoria(event, 'Conjuntos')">Conjuntos</button>                
+                <button class="btn-filtro" onclick="filtrarCategoria(event, 'Sex-shop')">Sex-shop</button>
+                <button class="btn-filtro" onclick="filtrarCategoria(event, 'Infantil')">Infantil</button>               
+            </div> 
+        </div>
+
+        <div class="filtro-container">
+            <div class="botoes-filtro-track" id="categorias-track">
+                </div>
+        </div>
+
+        <div class="filtro-container" style="margin-top: -5px; margin-bottom: 25px; background: transparent; border: none;">
+            <div class="botoes-filtro-track">
+                <button class="btn-filtro-tam active" onclick="filtrarPorTamanho('todos', this)">Todos os Tamanhos</button>
+                <button class="btn-filtro-tam" onclick="filtrarPorTamanho('P', this)">P</button>
+                <button class="btn-filtro-tam" onclick="filtrarPorTamanho('M', this)">M</button>
+                <button class="btn-filtro-tam" onclick="filtrarPorTamanho('G', this)">G</button>
+                <button class="btn-filtro-tam" onclick="filtrarPorTamanho('GG', this)">GG</button>
             </div>
         </div>
+
+
         <div id="lista-itens" class="vitrine-grid"></div>
     </section>
 
@@ -95,11 +111,12 @@
 
 <div id="modal-carrinho" class="modal" style="display: none;">
     <div class="modal-content">
-        <span class="close" onclick="fecharModal('modal-carrinho')">&times;</span>
-        <h3>Seu Carrinho</h3>
-        
-        <div id="itens-carrinho"></div>
-        <div id="total-carrinho" class="total-carrinho-box"></div>
+            <span class="close" onclick="fecharModal('modal-carrinho')">&times;</span>
+            <h3>Seu Carrinho</h3>
+            
+            <div id="itens-carrinho" style="width: 100%; max-width: 100%; display: block;"></div>
+            
+            <div id="total-carrinho" class="total-carrinho-box"></div>
 
           <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #7b001c;">
                 Seu Nome:
@@ -119,7 +136,7 @@
             <small style="color: #666; font-size: 0.8rem; display: block; margin-top: 5px;">
                 *Necessário para consultar o status do seu pedido depois.
             </small>
-        </div>
+        
 
         <button onclick="finalizarCompraFluxoCompleto()" class="btn-solicitar" style="background-color: #25d366;">
             <i class="fab fa-whatsapp"></i> Finalizar e Enviar Pedido
@@ -133,3 +150,4 @@
 <script src="script.js"></script>
 </body>
 </html>
+
