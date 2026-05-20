@@ -132,6 +132,32 @@ h1 {
 /* ==========================================================================
    5. FILTROS E INFRAESTRUTURA DE GRIDS (MELHORADO)
    ========================================================================== */
+
+/* Estilos para os Botões de Filtro de Tamanho */
+.btn-filtro-tam {
+    background-color: #ffffff;
+    color: #555;
+    border: 1px solid #e0e0e0;
+    padding: 6px 14px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.25s ease;
+}
+
+.btn-filtro-tam:hover {
+    background-color: #f5f5f5;
+}
+
+.btn-filtro-tam.active {
+    background-color: var(--primary-blue) !important;
+    color: white !important;
+    border-color: var(--primary-blue);
+    box-shadow: 0 3px 8px rgba(123, 0, 28, 0.2);
+}
+
 .filtro-container {
     width: 100%;
     overflow-x: auto; /* Permite deslizar o dedo lateralmente no celular */
@@ -431,6 +457,7 @@ html {
     position: relative;
     max-height: 90vh;
     overflow-y: auto;
+    overflow-x: hidden; /* IMPEDE QUALQUER VAZAMENTO HORIZONTAL NO MODAL */
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
@@ -549,8 +576,12 @@ html {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px;
+    padding: 10px 0;
     border-bottom: 1px solid #eee;
+    gap: 10px;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
 }
 
 .total-carrinho-box {
@@ -698,4 +729,57 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     padding: 40px; 
     color: #999; 
     font-style: italic; 
+}
+
+/* ==========================================================================
+   ESTILOS DE VARIAÇÕES (CORES E TAMANHOS)
+   ========================================================================== */
+.opcoes-flex {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+/* Pílulas de Tamanho */
+.pilula-opcao {
+    background: #ffffff;
+    border: 2px solid #e0e0e0;
+    color: #333;
+    padding: 6px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pilula-opcao:hover {
+    border-color: #999;
+}
+
+.pilula-opcao.active {
+    border-color: #7b001c; /* Cor Vinho da sua marca */
+    background-color: #7b001c;
+    color: white;
+}
+
+/* Círculos de Cores */
+.bola-cor {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid #e0e0e0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+}
+
+.bola-cor:hover {
+    transform: scale(1.1);
+}
+
+.bola-cor.active {
+    border-color: #7b001c;
+    box-shadow: 0 0 0 3px rgba(123, 0, 28, 0.3), inset 0 0 5px rgba(0,0,0,0.2);
+    transform: scale(1.1);
 }
