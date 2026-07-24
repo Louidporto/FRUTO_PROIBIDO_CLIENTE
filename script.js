@@ -1,3 +1,13 @@
+// Adicione no topo do script.js
+function normalizarTexto(str) {
+    if (!str) return '';
+    return String(str)
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/\s+/g, '') // Remove espaços extras
+        .replace(/[^a-z0-9]/g, ''); // Remove traços/especiais se houver
+}
 // ==========================================================================
 // 1. VARIÁVEIS GLOBAIS
 // ==========================================================================
