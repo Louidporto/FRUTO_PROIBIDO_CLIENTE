@@ -112,7 +112,9 @@ function aplicarFiltrosCruzados() {
                 if (!p || p.status !== "ativo") return;
                 
                 // 2. Validação da Categoria
-                const bateCategoria = (filtroCategoriaAtual === 'todos' || p.categoria === filtroCategoriaAtual);
+                const catProdutoNorm = normalizarTexto(p.categoria);
+                const catFiltroNorm = normalizarTexto(filtroCategoriaAtual);
+                const bateCategoria = (filtroCategoriaAtual === 'todos' || catProdutoNorm === catFiltroNorm);
                 
                 // 3. Validação do Tamanho com proteção contra dados corrompidos
                 let bateTamanho = false;
